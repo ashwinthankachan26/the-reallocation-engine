@@ -1,0 +1,14 @@
+{
+  "_note": "Every value in this file is your-input: design decisions made by the recipe author on 2026-10-02. They are not records. See the recipe for the reason behind each.",
+  "target_soc": "15-1252",
+  "sponsorship": {
+    "proven_min_approvals": 10,
+    "proven_min_rate": 90,
+    "p_proven": 0.9,
+    "p_likely": 0.6
+  },
+  "timeline": {
+    "hiring_lag_days": 45,
+    "buffer_days": 30
+  }
+}

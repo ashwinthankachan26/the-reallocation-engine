@@ -1,0 +1,9 @@
+{
+  "_note": "HYPOTHETICAL page snapshot (fixture text, not a real posting). Shape matches classifyLiveness() input in scripts/ats/liveness-core.mjs.",
+  "status": 200,
+  "finalUrl": "https://jobs.example.com/posting",
+  "bodyText": "Backend Software Engineer. We build data platforms for healthcare and software teams. You will design, build, and operate backend services in Java and Python, review code, write tests, and work with product and data teams. Requirements: a degree in computer science or a related field, experience with REST APIs, SQL, and cloud services. Benefits include health insurance, learning budget, and flexible hours. We build data platforms for healthcare and software teams. You will design, build, and operate backend services in Java and Python, review code, write tests, and work with product and data teams. Requirements: a degree in computer science or a related field, experience with REST APIs, SQL, and cloud services. Benefits include health insurance, learning budget, and flexible hours.",
+  "applyControls": [
+    "Apply for this job"
+  ]
+}

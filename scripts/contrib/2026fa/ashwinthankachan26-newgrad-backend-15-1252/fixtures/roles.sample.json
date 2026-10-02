@@ -1,0 +1,28 @@
+{
+  "_note": "SAMPLE run input. Company names are real rows in the 80 Days CSV; the postings, URLs, and snapshots are HYPOTHETICAL (example.com) so the run is offline and reproducible. Use --live with real URLs for a live run.",
+  "roles": [
+    { "role_id": "r01-abacus", "company": "Abacus Insights", "title": "Backend Software Engineer, New Grad",
+      "url": "https://jobs.example.com/abacus-insights/backend-new-grad", "liveness_snapshot": "snapshots/active.json" },
+    { "role_id": "r02-acquia", "company": "Acquia", "title": "Software Engineer I, Backend",
+      "url": "https://jobs.example.com/acquia/swe-1-backend", "liveness_snapshot": "snapshots/active.json" },
+    { "role_id": "r03-acuitymd", "company": "AcuityMD", "title": "Backend Engineer",
+      "url": "https://jobs.example.com/acuitymd/backend", "liveness_snapshot": "snapshots/expired.json" },
+    { "role_id": "r04-silverrail", "company": "SilverRail Technologies", "title": "Software Developer",
+      "url": "https://jobs.example.com/silverrail/software-developer", "liveness_snapshot": "snapshots/active.json" },
+    { "role_id": "r05-abacus-late", "company": "Abacus Insights", "title": "Platform Engineer (applied April 2027)",
+      "url": "https://jobs.example.com/abacus-insights/platform", "liveness_snapshot": "snapshots/active.json",
+      "apply_date": "2027-04-10" },
+    { "role_id": "r06-affectiva", "company": "Affectiva", "title": "Backend Engineer",
+      "url": "https://jobs.example.com/affectiva/backend", "liveness_snapshot": "snapshots/active.json" },
+    { "role_id": "r07-6k", "company": "6K Inc", "title": "Software Engineer",
+      "url": "https://jobs.example.com/6k/software-engineer", "liveness_snapshot": "snapshots/active.json" },
+    { "role_id": "r08-northwind", "company": "Northwind Ledger Systems", "title": "Backend Engineer (fictional company)",
+      "url": "https://jobs.example.com/northwind/backend", "liveness_snapshot": "snapshots/active.json" },
+    { "role_id": "r09-avava", "company": "Avava", "title": "Software Engineer",
+      "url": "https://jobs.example.com/avava/software-engineer", "liveness_snapshot": "snapshots/active.json" },
+    { "role_id": "r10-ufa", "company": "UFA", "title": "Junior Software Engineer",
+      "url": "https://jobs.example.com/ufa/junior-swe" },
+    { "role_id": "r11-pubmark", "company": "Pubmark", "title": "Software Engineer",
+      "url": "https://jobs.example.com/pubmark/software-engineer", "liveness_snapshot": "snapshots/uncertain.json" }
+  ]
+}

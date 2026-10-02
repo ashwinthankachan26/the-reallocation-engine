@@ -1,0 +1,9 @@
+{
+  "_note": "HYPOTHETICAL page snapshot with content but no visible apply control (fixture text).",
+  "status": 200,
+  "finalUrl": "https://jobs.example.com/posting",
+  "bodyText": "Software Engineer. We build data platforms for healthcare and software teams. You will design, build, and operate backend services in Java and Python, review code, write tests, and work with product and data teams. Requirements: a degree in computer science or a related field, experience with REST APIs, SQL, and cloud services. Benefits include health insurance, learning budget, and flexible hours. We build data platforms for healthcare and software teams. You will design, build, and operate backend services in Java and Python, review code, write tests, and work with product and data teams. Requirements: a degree in computer science or a related field, experience with REST APIs, SQL, and cloud services. Benefits include health insurance, learning budget, and flexible hours.",
+  "applyControls": [
+    "Share this job"
+  ]
+}

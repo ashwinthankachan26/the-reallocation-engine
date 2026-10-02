@@ -1,0 +1,22 @@
+{
+  "_note": "FICTIONAL persona, safe to commit. Mirrors the recipe author's situation (Dec 2026 MS graduate, F-1, planned post-completion OPT) with an invented identity. No real contact details.",
+  "candidate": {
+    "name": "Dev Menon",
+    "email": "dev.menon@example.com",
+    "location": "Boston, MA"
+  },
+  "target_role": {
+    "primary": "New-grad Backend Software Engineer (Java / Spring Boot, Python)",
+    "soc": "15-1252"
+  },
+  "visa": {
+    "type": "F-1",
+    "current_status": "F-1 student; post-completion OPT planned, not yet filed",
+    "program_end": "2026-12",
+    "ead_start_date": "2027-02-01",
+    "unemployment_ceiling": 90,
+    "unemployment_days_used": 0,
+    "stem_eligible": null,
+    "notes": "EAD start date is a planned request, not an approval. stem_eligible is unconfirmed."
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "_note": "TEST fixture: persona with ead_start_date removed, to prove the tool refuses to default it.",
+  "candidate": {
+    "name": "Dev Menon",
+    "email": "dev.menon@example.com",
+    "location": "Boston, MA"
+  },
+  "target_role": {
+    "primary": "New-grad Backend Software Engineer (Java / Spring Boot, Python)",
+    "soc": "15-1252"
+  },
+  "visa": {
+    "type": "F-1",
+    "current_status": "F-1 student; post-completion OPT planned, not yet filed",
+    "program_end": "2026-12",
+    "unemployment_ceiling": 90,
+    "unemployment_days_used": 0,
+    "stem_eligible": null,
+    "notes": "EAD start date is a planned request, not an approval. stem_eligible is unconfirmed."
+  }
+}

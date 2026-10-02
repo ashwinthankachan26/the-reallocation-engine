@@ -1,0 +1,10 @@
+company_name,state,Total Approvals,Approval_Rate,median_salary_offered,top_job_titles_sponsored
+EXAMPLE PROVEN CO INC,MA,20.0,100.0,140000.0,"['Software Engineer', 'Senior Software Engineer']"
+EXAMPLE SENIOR ONLY INC,MA,15.0,95.0,170000.0,"['Senior Software Engineer', 'Staff Software Engineer']"
+EXAMPLE LIKELY LLC,MA,3.0,100.0,95000.0,"['Software Developer']"
+EXAMPLE LOW RATE INC,MA,30.0,70.0,120000.0,"['Software Engineer']"
+EXAMPLE NO DATA INC,MA,,,,
+EXAMPLE TWIN INC,MA,4.0,100.0,100000.0,"['Software Engineer']"
+EXAMPLE TWIN LLC,MA,,,,
+EXAMPLE BIOTECH INC,MA,12.0,100.0,110000.0,"['Research Scientist', 'Clinical Data Manager']"
+"EXAMPLE COMMA, INC",MA,11.0,100.0,130000.0,"['Backend Engineer']"

@@ -1,0 +1,16 @@
+{
+  "_note": "TEST fixture: fictional companies from companies.fixture.csv; snapshots are fixture text.",
+  "roles": [
+    { "role_id": "t-tailor", "company": "Example Proven Co", "title": "Backend SWE", "liveness_snapshot": "../snapshots/active.json" },
+    { "role_id": "t-network", "company": "Example Senior Only", "title": "SWE I", "liveness_snapshot": "../snapshots/active.json" },
+    { "role_id": "t-likely", "company": "Example Likely", "title": "Developer", "liveness_snapshot": "../snapshots/active.json" },
+    { "role_id": "t-expired", "company": "Example Proven Co", "title": "Closed role", "liveness_snapshot": "../snapshots/expired.json" },
+    { "role_id": "t-late", "company": "Example Proven Co", "title": "Applied too late", "liveness_snapshot": "../snapshots/active.json", "apply_date": "2027-04-10" },
+    { "role_id": "t-missing", "company": "Nobody Here Corp", "title": "SWE", "liveness_snapshot": "../snapshots/active.json" },
+    { "role_id": "t-nodata", "company": "Example No Data", "title": "SWE", "liveness_snapshot": "../snapshots/active.json" },
+    { "role_id": "t-twin", "company": "Example Twin", "title": "SWE", "liveness_snapshot": "../snapshots/active.json" },
+    { "role_id": "t-biotech", "company": "Example Biotech", "title": "Backend SWE", "liveness_snapshot": "../snapshots/active.json" },
+    { "role_id": "t-unchecked", "company": "Example Comma", "title": "Backend SWE" },
+    { "role_id": "t-uncertain", "company": "Example Low Rate", "title": "SWE", "liveness_snapshot": "../snapshots/uncertain.json" }
+  ]
+}
