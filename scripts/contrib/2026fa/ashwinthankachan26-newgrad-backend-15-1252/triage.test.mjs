@@ -174,6 +174,16 @@ test('v0.2 sweep helpers: software + US only, seniority kept, contacts redacted'
   assert.equal(postingRequirements(text, picked[0].title, SRC.record, config.requirements.off_target_title_terms).years.value, 2);
 });
 
+test('census reproduces headline counts with the triage tool\'s own title rules', async () => {
+  const { census } = await import('./census.mjs');
+  const c = census(rows, 'MA');
+  // fixture: 7 rows with approvals; Example Biotech lists no software title; Example Senior Only is senior-only
+  assert.equal(c.rows_with_approvals, 7);
+  assert.equal(c.rows_with_a_software_title, 6);
+  assert.equal(c.senior_only_on_list, 1);
+  assert.equal(c.software_rows_in_state, 6);
+});
+
 test('next action: senior-only reroutes to NETWORK, Skip always wins', () => {
   assert.equal(nextAction('Apply', 'non-senior-title-present').action, 'TAILOR');
   assert.equal(nextAction('Apply', 'senior-only-on-list').action, 'NETWORK');

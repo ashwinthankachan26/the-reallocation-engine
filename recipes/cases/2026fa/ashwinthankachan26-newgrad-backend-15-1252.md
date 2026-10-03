@@ -12,9 +12,9 @@ recipe_version: 0.2.0
 
 **What this is.** A step-by-step procedure, plus a small tool that runs it, for an international master's student graduating in December 2026 on an F-1 visa who wants a new-graduate backend software job and will need visa sponsorship later. For each job they are considering, it checks public H-1B records and answers a question a job posting does not: *does this company sponsor people at a new-graduate level, or only senior engineers?* It also checks that the posting is still open and that hiring could finish before the student's post-graduation work window runs out. Version 0.2 also reads **what each posting asks for** (years of experience, seniority in the title, role type) and compares it with the student's own level.
 
-**Why read it.** About a third of the companies in the engine's dataset that sponsored software roles list only senior, staff, lead, or principal titles. "This company sponsors" is not the same as "this company sponsors someone like me." Without this check, a new graduate spends hours tailoring applications to companies whose sponsorship history is all senior-level.
+**Why read it.** About a third of the sponsors in the engine's dataset with software titles (207 of 571 rows, 36%; reproduce with `census.mjs`) list only senior, staff, lead, or principal-type titles. "This company sponsors" is not the same as "this company sponsors someone like me." Without this check, a new graduate spends hours tailoring applications to companies whose sponsorship history is all senior-level.
 
-**What it found.** On 80 open software postings at nine Boston-area sponsors, only 9 were worth application time (2 to tailor, 7 for a quick application); 57 were too senior and belong in networking, and 14 were at a company with no sponsorship data.
+**What it found.** On 80 open software postings at nine Boston-area sponsors, the tool marked only 9 for an application (2 to tailor, 7 for a quick application; 7 in total before the persona's experience was corrected from 0 to 1 year). It sent 57 to networking (27 because the posting itself was too senior or off-target, 30 because the company's sponsor list is senior-only) and 14 to research (no sponsorship data).
 
 **What it decides.** Nothing on its own. Each job gets a recommended next step — *tailor an application*, *quick-apply with a referral ask*, *network first*, *skip*, *research by hand*, or *check the posting first* — with every number labeled as a record, a judgment, or the student's own input. The student makes the call at every gate.
 
@@ -38,6 +38,7 @@ The sample path, a live run on 9 real postings, and an 80-posting sweep all run 
 |---|---|---|
 | Sponsorship records | `data/80-days-to-stay/80-days-csv/mapped_student_employment_targets_v3.csv` | `Total Approvals`, `Approval_Rate`, `top_job_titles_sponsored`, `median_salary_offered`, `state` |
 | National wage | `data/bls/compact/soc_occupation_compact.csv`, row `15-1252.00` | salary sanity check only |
+| Census | `scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/census.mjs` | reproduces the 571 / 207 / 61 counts cited here, offline, with the tool's own title rules |
 | Liveness rules | `scripts/ats/liveness-core.mjs` → `classifyLiveness()` | imported, not copied |
 | Live page fetch | `scripts/ats/liveness-browser.mjs` → `checkUrlLiveness()` | `--live` only; one URL at a time; only URLs whose host is in `config.json` → `live_hosts` |
 | Network hosts (live only) | `job-boards.greenhouse.io`, `boards.greenhouse.io`, `jobs.lever.co`, `jobs.ashbyhq.com`, and the careers sites Greenhouse redirected to on 2026-10-03: `www.pathai.com`, `www.klaviyo.com`, `careers.toasttab.com`, `careers.formlabs.com` | the only hosts a live run may open; anything else is `host-not-allowed` and never opened |
@@ -148,7 +149,7 @@ Timeline arithmetic: last unemployment day = EAD start + (ceiling − days used)
 - What the repository's liveness classifier concludes about a page: live in `--live` mode (`record`), from a saved snapshot otherwise (`your-input`).
 - The timeline arithmetic, given the student's dates and assumptions.
 - That the scorer received only roles with complete evidence and an explicit liveness factor (tested).
-- (v0.2) The posting's own experience sentence, quoted exactly (`record` when read live or from the board API). Correct on every live posting that states years (Vestmark 2–4, Cohere 2+, Lendbuzz 3+, Formlabs 4+, Klaviyo 5+, Toast 3+).
+- (v0.2) The posting's own experience sentence, quoted exactly (`record` when read live or from the board API; a board-API snapshot saved by `sweep.mjs` stays `record` because it's the board's own text at `fetched_at`, while a hand-written sample snapshot is `your-input`). Correct on every live posting that states years (Vestmark 2–4, Cohere 2+, Lendbuzz 3+, Formlabs 4+, Klaviyo 5+, Toast 3+).
 - (v0.2) How often the tool agrees with the person's own decisions: **7 of 8** on the live run (in-sample: the rule was written from those decisions) and **3 of 6** on postings it had never seen (out-of-sample).
 
 ## What it cannot verify

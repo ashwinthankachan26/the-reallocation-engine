@@ -12,7 +12,7 @@ promoted_to: null
 
 **What this is.** A small command-line tool for an international new graduate looking for backend software jobs. It checks each job against public H-1B sponsorship records and asks a question the usual "does this company sponsor?" check skips: *does it sponsor people at my level, or only senior engineers?*
 
-**Why use it.** About a third of the companies in the engine's dataset with sponsored software titles list only senior ones, and most postings at the rest ask for more experience than a new graduate has. Version 0.2 reads each posting's own requirements too. On 80 real postings at nine sponsors it found only 9 worth application time. The tool sends each job to one of six piles: **tailor**, **quick-apply**, **network first**, **skip**, **research by hand**, or **check the posting first**. It shows the evidence and its source for every pile.
+**Why use it.** About a third of the sponsors in the engine's dataset with software titles list only senior ones (207 of 571; reproduce with `census.mjs`), and many postings at the rest ask for more experience than a new graduate has. Version 0.2 reads each posting's own requirements too. On 80 real postings at nine sponsors it marked 9 for an application. The tool sends each job to one of six piles: **tailor**, **quick-apply**, **network first**, **skip**, **research by hand**, or **check the posting first**. It shows the evidence and its source for every pile.
 
 **What it decides.** Nothing. It recommends; you decide.
 
@@ -31,6 +31,12 @@ node --test scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/tr
 ```
 
 Name the test **file**: `node --test <folder>` fails on Node 22+.
+
+Census (reproduces the headline counts from the CSV with the same title rules, offline):
+
+```bash
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/census.mjs
+```
 
 Sweep (v0.2): fetch every open software posting on the boards in `config.json` → `sweep` (one host, `boards-api.greenhouse.io`; emails and phones redacted before saving), then triage the saved postings offline:
 
@@ -81,7 +87,8 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mj
 
 - `record` — a cell read from a repo data file, or a live liveness check
 - `model-judgment` — a rule this tool applies to records: sponsorship tier and probability, level fit, salary ratio, next action
-- `your-input` — persona dates, `config.json` values, and liveness read from a saved snapshot
+- `your-input` — persona dates, `config.json` values, and liveness read from a **hand-written** sample snapshot (fixture text)
+- A snapshot saved by `sweep.mjs` is `record`: it is the job board's own API text at `fetched_at` (emails and phones redacted), not text anyone wrote. A hand-written sample snapshot is `your-input`. The `method` field (`snapshot` vs `board-api`) records which one it is.
 
 ## How it fails
 

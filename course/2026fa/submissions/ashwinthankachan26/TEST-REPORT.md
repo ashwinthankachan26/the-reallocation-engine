@@ -30,6 +30,20 @@ Error: portals.yml not found. Run onboarding first.
 
 `npm run score` works (always with `--out-dir`, so the tracked example output isn't overwritten). `npm run ats:scan -- --dry-run` fails on a fresh clone because `data/ats/portals.yml` is gitignored and only `portals.example.yml` ships. The recipe records this as a fact that bites and doesn't depend on `ats:scan`. `npm run ats:liveness -- <url>` isn't needed separately: the prototype calls the same `checkUrlLiveness()` in `--live` mode.
 
+### Census: the headline figure, reproduced and hand-checked
+
+A reviewer pointed out that the "about a third of sponsors are senior-only" figure came from an ad-hoc script and couldn't be reproduced. `census.mjs` now reproduces it offline with the tool's own title rules (run by me, 2026-10-03):
+
+```text
+census of data/80-days-to-stay/80-days-csv/mapped_student_employment_targets_v3.csv (rows, not de-duplicated companies; same title rules as triage.mjs)
+  CSV rows                                30369
+  rows with H-1B approvals > 0            1552
+  …of those, with a software title listed 571
+  …of those, senior-only on the list      207  (36.3%)
+```
+
+**Hand-check (me, 2026-10-03):** 8 rows drawn by seed (4 labeled senior-only, 4 non-senior): NerdWallet, EverCharge, Lyra Health, Zendar / Real Savvy, MongoDB, Trunk Technologies, Vestmark. I read each one's sponsored titles in the CSV: **all 8 labels are correct** under the stated rule (senior-only = every *software* title carries Senior/Staff/Lead/Manager/Principal-type wording). One rule effect worth noting: NerdWallet's plain "Data Engineer" isn't a software title under the rule, so only its "Senior Software Engineer" counts. A unit test now checks the census counts on the fixture CSV (17 tests total).
+
 ## 1. Toolchain baseline
 
 | Check | Before (015843d) | After (11f0a43, clean checkout) |

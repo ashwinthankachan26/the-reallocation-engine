@@ -4,7 +4,7 @@
 
 I ran the triage tool on nine real job postings at Boston-area companies, checked live on 2026-10-03. It recommended tailoring five applications. It sent one (Toast) to networking first, because Toast's sponsorship record lists only senior software titles. It flagged one company (SimpliSafe) as missing from the sponsorship data instead of calling it a non-sponsor. It refused to call one page (Formlabs) open when it couldn't see an Apply button, and it skipped a deliberately broken link. I checked values against the source data by hand and deliberately broke the tool twice. The main lesson: the tool's most useful output is what it *won't* claim.
 
-Reading the postings myself showed the biggest gap: 4 of the 5 "tailor" jobs asked for 2–5+ years. So version 0.2 reads each posting's requirements too. On the same nine jobs it now matches my own decisions on 7 of 8. On 80 postings it had never seen, it found only 9 worth application time. On 6 of those I judged before seeing its answer, it agreed with me on 3. That gap is the honest measure of what's left to fix.
+Reading the postings myself showed the biggest gap: 4 of the 5 "tailor" jobs asked for 2–5+ years. So version 0.2 reads each posting's requirements too. On the same nine jobs it now matches my own decisions on 7 of 8. On 80 postings it had never seen, it marked only 9 for an application (7 with my original 0-year persona). On 6 of those I judged before seeing its answer, it agreed with me on 3. That gap is the honest measure of what's left to fix.
 
 ## Inputs
 
@@ -107,7 +107,7 @@ Excerpt from `runs/live-v0.2/triage-report.md` (three of its nine columns, locat
 ✓ triaged 80 roles → NETWORK 57 · QUICK-APPLY 7 · TAILOR 2 · RESEARCH 14
 ```
 
-Only **9 of 80** open software postings at these sponsors are worth application time for me. 57 are too senior (network), and 14 are at SimpliSafe, which has no sponsorship data (research).
+The tool marked **9 of 80** for an application (2 tailor, 7 quick-apply). The other 71: 57 network-first (27 because the posting itself is too senior or off-target, 30 because the company's sponsorship record lists only senior software titles: Toast 23, Cambridge Mobile Telematics 7), and 14 at SimpliSafe, which has no sponsorship data (research). Given the 3-of-6 out-of-sample agreement below, these are the tool's judgments, not settled answers.
 
 **Out-of-sample check.** Six postings drawn by seed. I decided each from the posting *before* seeing the tool's answer. From `runs/sweep/triage/triage-report.md`:
 
@@ -202,7 +202,7 @@ Only **9 of 80** open software postings at these sponsors are worth application 
 | live v0.2 + `--human` (me at 14:54; re-run by Claude at 15:12 after the persona fix) | TAILOR 1 · QUICK-APPLY 3 · NETWORK 2 · CHECK-LIVENESS 1 · RESEARCH 1 · SKIP 1; agreement 7/8 | the posting requirements reproduce my G5 decisions |
 | years quotes in `runs/live-v0.2/triage-report.md` vs the postings I read | Vestmark 2–4, Cohere 2+, Lendbuzz 3+, Formlabs 4+, Klaviyo 5+, Toast 3+ (Android) all quoted correctly | matches what I saw on the pages |
 | sweep (me, 14:54) | 80 postings from 9 boards saved | every open US software posting, contacts redacted |
-| sweep triage (me: persona 0; re-run by Claude: persona 1) | NETWORK 59/57 · TAILOR 2/2 · QUICK-APPLY 5/7 · RESEARCH 14/14 | most postings too senior for me |
+| sweep triage (me: persona 0; re-run by Claude: persona 1) | NETWORK 59/57 · TAILOR 2/2 · QUICK-APPLY 5/7 · RESEARCH 14/14 | most postings go to networking: too senior themselves, or at a senior-only sponsor |
 | **out-of-sample:** 6 postings judged blind by me | 3/6 agree | an honest measure, below the in-sample 7/8 |
 | **break found by testing:** private sweep dry run (Claude) | Senior/Staff/Lead postings with no years sentence → TAILOR; a designer role in the sweep | fixed with the title-level rule and sweep exclusions; 2 new tests |
 
