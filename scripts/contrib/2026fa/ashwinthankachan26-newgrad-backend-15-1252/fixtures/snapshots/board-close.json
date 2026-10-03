@@ -1,0 +1,9 @@
+{
+  "_note": "TEST fixture in sweep.mjs output shape (fictional text): a board-API listing asking 3+ years.",
+  "board_listing": {
+    "host": "boards-api.greenhouse.io",
+    "fetched_at": "2026-10-03T00:00:00Z",
+    "job_id": 1
+  },
+  "bodyText": "Backend Engineer. Requirements: 3+ years of backend development experience. You will design and operate backend services in Java and Python, write tests, review code, and work with product teams. Benefits include health insurance and a learning budget."
+}

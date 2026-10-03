@@ -14,6 +14,8 @@ import { fileURLToPath } from 'node:url';
 import {
   SRC, parseCsv, normalizeName, indexCompanies, lookupCompany, parseTitles,
   sponsorshipFromRow, levelFit, livenessGate, timelineFactor, nextAction, hostAllowed,
+  postingRequirements, mismatchCount, lagSensitivity, applyByDates,
+  htmlToText, redactContacts, selectSweepJobs, titleLevel,
 } from './lib.mjs';
 import { classifyLiveness } from '../../../ats/liveness-core.mjs';
 
@@ -108,6 +110,70 @@ test('live host allowlist: exact hosts, dot-suffix domains, nothing else', () =>
   assert.equal(hostAllowed('https://job-boards.greenhouse.io/x', []), false);               // empty list allows nothing
 });
 
+test('v0.2 posting requirements: years phrase, new-grad wording, not stated, not read', () => {
+  const terms = config.requirements.off_target_title_terms;
+  // phrasings copied from the 2026-10-03 live postings
+  assert.equal(postingRequirements('Nice to have: 2-4 years of professional software engineering experience.', 'Software Engineer', SRC.record, terms).years.value, 2);
+  assert.equal(postingRequirements('5+ years of engineering or data engineering experience, with 2+ years in HR tech', 'Full Stack', SRC.record, terms).years.value, 5);
+  assert.equal(postingRequirements('You have at least three years of professional experience.', 'SWE', SRC.record, terms).years.value, 3);
+  const ng = postingRequirements('Open to new grads graduating in December 2026.', 'Software Engineer I', SRC.record, terms);
+  assert.equal(ng.years.value, 0);
+  const none = postingRequirements('We build software. Join us.', 'Software Engineer I', SRC.record, terms);
+  assert.equal(none.years.value, null, 'no minimum stated is not invented as 0');
+  assert.equal(postingRequirements('', 'x', SRC.record, terms).status, 'not-read');
+  const android = postingRequirements('2+ years of professional software engineering experience', 'Software Engineer II, Android', SRC.record, terms);
+  assert.equal(android.role_type.value, 'off-target');
+  assert.equal(android.years.source, SRC.record);
+  assert.equal(android.role_type.source, SRC.input);
+});
+
+test('v0.2 mismatch rule: my G5 rule, written down', () => {
+  const read = (y, title = 'Software Engineer') => postingRequirements(y == null ? 'We build software.' : `${y}+ years of professional software engineering experience`, title, SRC.record, config.requirements.off_target_title_terms);
+  const gap = config.requirements.close_gap_years;
+  assert.equal(mismatchCount(read(null), 0, gap).value, 0);          // PathAI-like: no minimum stated
+  assert.equal(mismatchCount(read(2), 0, gap).value, 1);             // Vestmark / Cohere-like: close
+  assert.equal(mismatchCount(read(3), 0, gap).value, 1);             // Lendbuzz-like: still close
+  assert.equal(mismatchCount(read(4), 0, gap).value, 2);             // Formlabs-like: far
+  assert.equal(mismatchCount(read(2, 'Software Engineer II, Android'), 0, gap).value, 2);  // Toast-like: close + off-target
+  assert.equal(mismatchCount({ status: 'not-read' }, 0, gap).value, null);
+  assert.equal(nextAction('Apply', 'non-senior-title-present', mismatchCount(read(2), 0, gap)).action, 'QUICK-APPLY');
+  assert.equal(nextAction('Apply', 'non-senior-title-present', mismatchCount(read(5), 0, gap)).action, 'NETWORK');
+  assert.equal(nextAction('Apply', 'non-senior-title-present', mismatchCount(read(null), 0, gap)).action, 'TAILOR');
+  assert.equal(nextAction('Skip', 'non-senior-title-present', mismatchCount(read(null), 0, gap)).action, 'SKIP');
+});
+
+test('v0.2.1 posting title level: senior titles with no years stated are not TAILOR', () => {
+  assert.equal(titleLevel('Senior Software Engineer - Growth (Boston, MA)', SRC.record).value, 'senior');
+  assert.equal(titleLevel('Staff Software Engineer', SRC.record).value, 'senior');
+  assert.equal(titleLevel('Software Engineer III', SRC.record).value, 'senior');
+  assert.equal(titleLevel('Software Engineer II - Recommendations', SRC.record).value, 'mid');
+  assert.equal(titleLevel('Software Engineer I, Fullstack (Boston, MA (Hybrid))', SRC.record).value, 'entry-or-unstated');
+  const terms = config.requirements.off_target_title_terms;
+  const staff = postingRequirements('We build software.', 'Staff Software Engineer', SRC.record, terms, SRC.record);
+  assert.equal(mismatchCount(staff, 0, 3).value, 2);                       // far, though no years stated
+  assert.equal(nextAction('Apply', 'non-senior-title-present', mismatchCount(staff, 0, 3)).action, 'NETWORK');
+  const ii = postingRequirements('We build software.', 'Software Engineer II', SRC.record, terms, SRC.record);
+  assert.equal(mismatchCount(ii, 0, 3).value, 1);                          // close
+  assert.equal(postingRequirements('x', 'Software Product Designer', SRC.record, terms).role_type.value, 'off-target');
+});
+
+test('v0.2 hiring-lag sensitivity and apply-by dates', () => {
+  const base = { eadStart: '2027-02-01', ceiling: 90, daysUsed: 0, bufferDays: 30 };
+  assert.deepEqual(lagSensitivity({ ...base, applyDate: '2027-03-01' }, [30, 45, 60]).map((s) => s.factor), [1, 0.533, 0.033]);
+  assert.deepEqual(applyByDates(base, [30, 45, 60]).map((a) => a.apply_by), ['2027-03-02', '2027-02-15', '2027-01-31']);
+});
+
+test('v0.2 sweep helpers: software + US only, seniority kept, contacts redacted', () => {
+  const board = JSON.parse(fs.readFileSync(path.join(FX, 'test/board.fixture.json'), 'utf8'));
+  const picked = selectSweepJobs(board.jobs, config.sweep.filter);
+  assert.deepEqual(picked.map((j) => j.id), [101, 105]);   // intern, non-US, non-software dropped; Staff kept on purpose (the triage rule handles seniority)
+  const text = redactContacts(htmlToText(picked[0].content));
+  assert.match(text, /2\+ years of professional software engineering experience/);
+  assert.doesNotMatch(text, /@|555-0100|555-0199/);
+  assert.match(text, /\[email removed\].*\[phone removed\]/);
+  assert.equal(postingRequirements(text, picked[0].title, SRC.record, config.requirements.off_target_title_terms).years.value, 2);
+});
+
 test('next action: senior-only reroutes to NETWORK, Skip always wins', () => {
   assert.equal(nextAction('Apply', 'non-senior-title-present').action, 'TAILOR');
   assert.equal(nextAction('Apply', 'senior-only-on-list').action, 'NETWORK');
@@ -127,7 +193,7 @@ function runCli(extra) {
 }
 
 test('end to end: every role lands in the expected route, through the real scorer', () => {
-  const { out, res } = runCli([]);
+  const { out, res } = runCli(['--human', path.join(FX, 'test/human.test.json')]);
   assert.equal(res.status, 0, res.stderr);
   for (const f of ['triage-log.json', 'triage-report.md', 'roles.for-scorer.json', 'role-scores.json', 'role-scores.md']) {
     assert.ok(fs.existsSync(path.join(out, f)), `${f} written`);
@@ -139,10 +205,19 @@ test('end to end: every role lands in the expected route, through the real score
     't-expired': 'SKIP', 't-late': 'SKIP',
     't-missing': 'RESEARCH', 't-nodata': 'RESEARCH', 't-twin': 'RESEARCH', 't-biotech': 'RESEARCH',
     't-unchecked': 'CHECK-LIVENESS', 't-uncertain': 'CHECK-LIVENESS',
+    't-quick': 'QUICK-APPLY', 't-android': 'NETWORK', 't-far': 'NETWORK', 't-newgrad': 'TAILOR',
   });
+  // board-API listings are records; the years quote comes from the posting text
+  const quick = log.roles.find((r) => r.role_id === 't-quick');
+  assert.equal(quick.liveness.source, SRC.record);
+  assert.equal(quick.posting_requirements.years.value, 3);
+  assert.match(quick.posting_requirements.years.quote, /3\+ years of backend development experience/);
+  // agreement with the person's own decisions (one deliberate disagreement in the fixture)
+  assert.equal(log.human_agreement.compared, 5);
+  assert.equal(log.human_agreement.matched, 4);
   // the scorer only ever sees roles with complete evidence and an explicit liveness factor
   const sent = JSON.parse(fs.readFileSync(path.join(out, 'roles.for-scorer.json'), 'utf8'));
-  assert.equal(sent.length, 5);
+  assert.equal(sent.length, 9);
   for (const r of sent) {
     assert.equal(typeof r.liveness.factor, 'number', `${r.role_id} liveness explicit`);
     for (const term of [r.sponsorship, r.liveness, r.timeline]) assert.ok(LABELS.has(term.source));

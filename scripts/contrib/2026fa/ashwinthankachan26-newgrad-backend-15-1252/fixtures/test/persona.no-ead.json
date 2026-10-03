@@ -7,7 +7,8 @@
   },
   "target_role": {
     "primary": "New-grad Backend Software Engineer (Java / Spring Boot, Python)",
-    "soc": "15-1252"
+    "soc": "15-1252",
+    "experience_years": 0
   },
   "visa": {
     "type": "F-1",

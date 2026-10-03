@@ -23,13 +23,14 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   SRC, parseCsv, indexCompanies, lookupCompany, parseTitles, sponsorshipFromRow,
   levelFit, livenessGate, timelineFactor, salaryCheck, nextAction, parseDate, hostAllowed,
+  postingRequirements, mismatchCount, lagSensitivity, applyByDates,
 } from './lib.mjs';
 import { classifyLiveness } from '../../../ats/liveness-core.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../../../..');
 const RECIPE = 'recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md';
-const RECIPE_VERSION = '0.1.0';
+const RECIPE_VERSION = '0.2.0';
 const SCORER = path.join(ROOT, 'scripts/score/role-scorer.mjs');
 
 function fail(msg) { console.error(`✗ ${msg}`); process.exit(2); }
@@ -91,6 +92,12 @@ const sponsorRules = config.sponsorship;
 const { hiring_lag_days: lagDays, buffer_days: bufferDays } = config.timeline;
 const targetSoc = config.target_soc;
 const liveHosts = config.live_hosts || [];
+const reqCfg = config.requirements || null;          // v0.2 posting-requirements rule (your-input)
+const lagScenarios = config.timeline.lag_scenarios || [lagDays];
+const myYears = persona.target_role?.experience_years;
+if (reqCfg && (myYears == null || !Number.isFinite(Number(myYears)))) fail('G1 input gate: persona.target_role.experience_years is missing — the posting-requirements rule needs it; refusing to default it');
+const humanPath = arg('human', null);
+const human = humanPath ? readJson(resolve(humanPath), 'human decisions file') : null;
 if (live && liveHosts.length === 0) fail('--live needs config.live_hosts: the recipe must name every host a live run may open');
 
 // ── data ────────────────────────────────────────────────────────────────────
@@ -114,7 +121,13 @@ async function livenessFor(role) {
   if (!role.liveness_snapshot) return livenessGate(null);
   const snapPath = path.resolve(path.dirname(rolesPath), role.liveness_snapshot);
   const snap = readJson(snapPath, `liveness snapshot for ${role.role_id}`);
-  return { ...livenessGate(classifyLiveness(snap), 'snapshot'), snapshot: rel(snapPath) };
+  if (snap.board_listing) {
+    // saved by sweep.mjs from a public job-board API: listed there = open at fetch time (a record)
+    const b = snap.board_listing;
+    const lv = livenessGate({ result: 'active', code: 'listed_on_board_api', reason: `listed on ${b.host} at ${b.fetched_at}` }, 'board-api');
+    return { ...lv, snapshot: rel(snapPath), _text: snap.bodyText, _textSource: SRC.record };
+  }
+  return { ...livenessGate(classifyLiveness(snap), 'snapshot'), snapshot: rel(snapPath), _text: snap.bodyText, _textSource: SRC.input };
 }
 
 let browser = null, page = null;
@@ -125,7 +138,10 @@ async function runLive(role, checker) {
     page = await browser.newPage();
   }
   const res = await checker(page, role.url); // sequential: repo rule, never parallel
-  return { ...livenessGate(res, 'live'), checked_at: new Date().toISOString() };
+  // v0.2: read the posting text from the page already open — no extra request
+  let text = '';
+  try { text = await page.evaluate(() => document.body?.innerText ?? ''); } catch { text = ''; }
+  return { ...livenessGate(res, 'live'), checked_at: new Date().toISOString(), _text: text, _textSource: SRC.record };
 }
 
 // ── per-role evidence ───────────────────────────────────────────────────────
@@ -154,14 +170,24 @@ for (const role of roles) {
 
   let lv = await livenessFor(role);
   if (lv.checker) lv = await runLive(role, lv.checker);
+  const postingText = lv._text, textSource = lv._textSource;
+  delete lv._text; delete lv._textSource;   // the log keeps the extracted quote, not the whole page
   e.liveness = lv;
   if (!lv.cleared) blockers.push({ route: 'CHECK-LIVENESS', reason: lv.code });
+  if (reqCfg) {
+    e.posting_requirements = postingRequirements(postingText, role.title, textSource, reqCfg.off_target_title_terms || [], role.title_source === 'board-api' ? SRC.record : SRC.input);
+    e.mismatch = mismatchCount(e.posting_requirements, Number(myYears), reqCfg.close_gap_years);
+  }
 
   try {
     e.timeline = timelineFactor({
       eadStart: visa.ead_start_date, ceiling: visa.unemployment_ceiling, daysUsed: visa.unemployment_days_used,
       applyDate: role.apply_date || today, lagDays, bufferDays,
     });
+    e.lag_sensitivity = lagSensitivity({
+      eadStart: visa.ead_start_date, ceiling: visa.unemployment_ceiling, daysUsed: visa.unemployment_days_used,
+      applyDate: role.apply_date || today, bufferDays,
+    }, lagScenarios);
   } catch (err) { fail(`${role.role_id}: ${err.message}`); }
 
   e.blockers = blockers;
@@ -209,11 +235,27 @@ for (const e of evaluated) {
     continue;
   }
   e.scorer = { composite: s.composite, recommendation: s.recommendation, reason: s.reason, arithmetic: s.trace.arithmetic };
-  e.next_action = { ...nextAction(s.recommendation, e.level_fit.value), source: SRC.model };
+  e.next_action = { ...nextAction(s.recommendation, e.level_fit.value, e.mismatch), source: SRC.model };
 }
 
 const counts = {};
 for (const e of evaluated) counts[e.next_action.action] = (counts[e.next_action.action] || 0) + 1;
+
+// v0.2: compare the tool's next action with the person's own decisions (if given)
+let agreement = null;
+if (human) {
+  const rows = [];
+  for (const e of evaluated) {
+    const h = human.decisions?.[e.role_id];
+    if (!h || h === 'n/a') continue;
+    rows.push({ role_id: e.role_id, human: h, tool: e.next_action.action, match: h === e.next_action.action });
+  }
+  agreement = { source: SRC.input, file: rel(resolve(humanPath)), note: human._note || null, compared: rows.length, matched: rows.filter((r) => r.match).length, rows };
+}
+let applyBy = null;
+try {
+  applyBy = applyByDates({ eadStart: visa.ead_start_date, ceiling: visa.unemployment_ceiling, daysUsed: visa.unemployment_days_used, bufferDays }, lagScenarios);
+} catch { applyBy = null; }
 
 // ── output 1: JSON log for the agent ───────────────────────────────────────
 const log = {
@@ -232,7 +274,11 @@ const log = {
     visa: { ead_start_date: visa.ead_start_date, unemployment_ceiling: visa.unemployment_ceiling, unemployment_days_used: visa.unemployment_days_used },
     target_soc: targetSoc,
     live_hosts: liveHosts,
+    requirements: reqCfg ? { ...reqCfg, my_experience_years: Number(myYears) } : null,
+    lag_scenarios: lagScenarios,
   },
+  apply_by: applyBy,
+  human_agreement: agreement,
   scorer_stdout: scorerStdout,
   counts,
   gaps,
@@ -257,7 +303,7 @@ md.push('');
 md.push('## Executive summary');
 md.push('');
 md.push(`This report checks ${roles.length} backend software roles against public H-1B sponsorship records and asks one extra question a job posting does not answer: does this company sponsor people at a new-graduate level, or only senior engineers? `
-  + `It recommends **${n('TAILOR')} to tailor an application for**, **${n('NETWORK')} to approach through networking first**, and **${n('SKIP')} to skip**. `
+  + `It recommends **${n('TAILOR')} to tailor an application for**, ${reqCfg ? `**${n('QUICK-APPLY')} for a quick template application with a referral ask** (close but not a full fit, judged from what the posting itself asks for), ` : ''}**${n('NETWORK')} to approach through networking first**, and **${n('SKIP')} to skip**. `
   + `**${n('RESEARCH') + n('CHECK-LIVENESS')}** could not be scored because evidence was missing; the report says what is missing instead of guessing. `
   + 'Nothing here is a decision: you make the call on every row.');
 md.push('');
@@ -265,24 +311,53 @@ md.push(`Run mode: **${log.mode}**. ${live ? '' : 'Liveness results come from sa
 md.push('');
 md.push('## Results');
 md.push('');
-md.push('| Role | Next action | Why | Sponsorship (record → tier) | Level fit (inference) | Liveness | Timeline | Composite |');
-md.push('|---|---|---|---|---|---|---|---|');
-const order = { TAILOR: 0, NETWORK: 1, 'CHECK-LIVENESS': 2, RESEARCH: 3, SKIP: 4 };
+md.push('| Role | Next action | Why | Sponsorship (record → tier) | Level fit (inference) | Posting asks | Liveness | Timeline | Composite |');
+md.push('|---|---|---|---|---|---|---|---|---|');
+const order = { TAILOR: 0, 'QUICK-APPLY': 1, NETWORK: 2, 'CHECK-LIVENESS': 3, RESEARCH: 4, SKIP: 5 };
+const asks = (e) => {
+  const r = e.posting_requirements;
+  if (!r) return '—';
+  if (r.status !== 'read') return 'not read';
+  const y = r.years.value == null ? 'no minimum stated' : `"${r.years.quote.slice(0, 60)}" → ${r.years.value}`;
+  return `${y} [${r.years.source}]${r.role_type.value === 'off-target' ? ` · off-target: ${r.role_type.matched}` : ''}`;
+};
 for (const e of [...evaluated].sort((a, b) => order[a.next_action.action] - order[b.next_action.action])) {
   const sp = e.sponsorship?.status === 'scored'
-    ? `${e.sponsorship.approvals.value} approvals, ${e.sponsorship.approval_rate.value}% → ${e.sponsorship.tier.value}`
+    ? `${e.sponsorship.approvals.value} approvals, ${Number(Number(e.sponsorship.approval_rate.value).toFixed(1))}% → ${e.sponsorship.tier.value}`
     : (e.sponsorship?.status || e.csv_match.status);
   const lvl = e.sponsorship?.status === 'scored' ? e.level_fit.value : '—';
   const lv = `${e.liveness.result}${e.liveness.factor != null ? ` (×${e.liveness.factor})` : ''} [${e.liveness.source}]`;
   const tl = `×${e.timeline.factor} (slack ${e.timeline.slack_days}d)`;
-  md.push(`| ${e.company} — ${e.title || e.role_id} | **${e.next_action.action}** | ${e.next_action.why} | ${sp} | ${lvl} | ${lv} | ${tl} | ${e.scorer ? e.scorer.composite : '—'} |`);
+  md.push(`| ${e.company} — ${e.title || e.role_id} | **${e.next_action.action}** | ${e.next_action.why} | ${sp} | ${lvl} | ${asks(e)} | ${lv} | ${tl} | ${e.scorer ? e.scorer.composite : '—'} |`);
+}
+md.push('');
+if (agreement) {
+  md.push('## Does the tool agree with my own decisions?');
+  md.push('');
+  md.push(`Compared with the decisions I made by hand (\`${agreement.file}\`): **${agreement.matched} of ${agreement.compared} match.**${agreement.note ? ` ${agreement.note}` : ''}`);
+  md.push('');
+  md.push('| Role | My decision | Tool | Match |');
+  md.push('|---|---|---|---|');
+  for (const r of agreement.rows) md.push(`| ${r.role_id} | ${r.human} | ${r.tool} | ${r.match ? '✓' : '✗'} |`);
+  md.push('');
+}
+md.push('## Hiring-lag sensitivity');
+md.push('');
+md.push(`Only the ${lagDays}-day lag feeds the score; the others show how much the answer depends on that guess.`);
+if (applyBy) md.push(`To keep the full ${bufferDays}-day buffer before the last unemployment day (${applyBy[0].last_unemployment_day}), apply by: ${applyBy.map((a) => `**${a.apply_by}** (${a.lag_days}-day lag)`).join(' · ')}.`);
+md.push('');
+md.push(`| Role | Apply date | ${lagScenarios.map((l) => `${l}-day lag`).join(' | ')} |`);
+md.push(`|---|---|${lagScenarios.map(() => '---').join('|')}|`);
+for (const e of evaluated) {
+  md.push(`| ${e.role_id} | ${e.timeline.apply_date} | ${e.lag_sensitivity.map((s) => `×${s.factor} (${s.slack_days}d)`).join(' | ')} |`);
 }
 md.push('');
 md.push('## Verified vs. inferred');
 md.push('');
 md.push('- **record:** approval counts, approval rates, the sponsored-title list, the company median salary offered (80 Days CSV); the national median wage (BLS); liveness only when checked live.');
-md.push('- **model-judgment:** the sponsorship tier and its probability, the level-fit class, the salary ratio, and the next action — each is a rule applied to records.');
-md.push('- **your-input:** EAD start date, unemployment days, hiring lag, buffer, tier thresholds, and (in sample mode) the liveness snapshots.');
+md.push('- **record:** the posting\'s own words quoted under "Posting asks" when read live or from a job-board API.');
+md.push('- **model-judgment:** the sponsorship tier and its probability, the level-fit class, the years number taken from the posting quote, the mismatch count, the salary ratio, and the next action — each is a rule applied to records.');
+md.push('- **your-input:** EAD start date, unemployment days, my years of experience, hiring lag and lag scenarios, buffer, tier thresholds, the off-target title list, role titles, and (in sample mode) the liveness snapshots.');
 md.push('');
 md.push('## Salary sanity check (not used in the score)');
 md.push('');
@@ -310,6 +385,7 @@ md.push('- Whether the company will sponsor **this** role: approvals are company
 md.push('- Anything about companies with no approval data (about 95% of the CSV). Those are unknown, not non-sponsors.');
 md.push('- How well your résumé fits the job: the fit vote is not computed, so the composite tops out at 0.315.');
 md.push('- Recent funding: the CSV funding dates end in September 2025, and the shipped Form D samples match none of its companies.');
+if (reqCfg) md.push('- Whether the years number is right. The rule takes the first "N years … experience" phrase in the posting; a company blurb such as "15 years of experience serving clients" would be misread. The quote is shown, so check it before acting.');
 if (gaps.length) for (const g of gaps) md.push(`- ${g}`);
 md.push('');
 md.push('## Run record');

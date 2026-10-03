@@ -1,0 +1,11 @@
+{
+  "_note": "TEST fixture: a person's decisions in the tool's vocabulary, with one deliberate disagreement (t-likely).",
+  "decisions": {
+    "t-tailor": "TAILOR",
+    "t-quick": "QUICK-APPLY",
+    "t-android": "NETWORK",
+    "t-far": "NETWORK",
+    "t-likely": "NETWORK",
+    "t-expired": "n/a"
+  }
+}

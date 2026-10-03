@@ -1,5 +1,5 @@
 {
-  "_note": "Every value in this file is your-input: design decisions made by the recipe author on 2026-10-02. They are not records. See the recipe for the reason behind each.",
+  "_note": "Every value in this file is your-input: design decisions made by the recipe author (v0.1 on 2026-10-02; requirements + lag_scenarios added in v0.2 on 2026-10-03). They are not records. See the recipe for the reason behind each.",
   "target_soc": "15-1252",
   "sponsorship": {
     "proven_min_approvals": 10,
@@ -9,7 +9,28 @@
   },
   "timeline": {
     "hiring_lag_days": 45,
-    "buffer_days": 30
+    "buffer_days": 30,
+    "lag_scenarios": [
+      30,
+      45,
+      60
+    ]
+  },
+  "requirements": {
+    "_note": "v0.2 posting-requirements rule = the author's own G5 rule from the 2026-10-03 live run, written down. close_gap_years: a posting asking up to this many years more than mine is 'close' (quick apply); more is 'far' (network).",
+    "close_gap_years": 3,
+    "off_target_title_terms": [
+      "android",
+      "ios",
+      "mobile",
+      "embedded",
+      "firmware",
+      "frontend",
+      "front-end",
+      "hardware",
+      "sdet",
+      "designer"
+    ]
   },
   "_live_hosts_note": "Every host a --live run may open. Job-board hosts plus the company careers sites Greenhouse redirected to on 2026-10-03 (curl -L check). The code checks the starting URL's host; redirect targets are listed here so the recipe names them, but the code does not re-check them, and pages may still load scripts/assets from other hosts.",
   "live_hosts": [
@@ -21,5 +42,52 @@
     "www.klaviyo.com",
     "careers.toasttab.com",
     "careers.formlabs.com"
-  ]
+  ],
+  "sweep": {
+    "_note": "v0.2 unfiltered test set (your-input): which public boards to sweep and which postings count as 'software, US'. Boards = Massachusetts companies from the live run with public Greenhouse boards (Proven sponsors, plus Formlabs = Likely and SimpliSafe = no CSV row). Seniority is NOT pre-filtered on purpose.",
+    "host": "boards-api.greenhouse.io",
+    "boards": [
+      {
+        "token": "pathai",
+        "company": "PathAI"
+      },
+      {
+        "token": "vestmark",
+        "company": "Vestmark"
+      },
+      {
+        "token": "klaviyo",
+        "company": "Klaviyo"
+      },
+      {
+        "token": "coherehealth",
+        "company": "Cohere Health"
+      },
+      {
+        "token": "toast",
+        "company": "Toast"
+      },
+      {
+        "token": "formlabs",
+        "company": "Formlabs"
+      },
+      {
+        "token": "netbrain",
+        "company": "NetBrain Technologies"
+      },
+      {
+        "token": "cambridgemobiletelematics",
+        "company": "Cambridge Mobile Telematics"
+      },
+      {
+        "token": "simplisafe",
+        "company": "SimpliSafe"
+      }
+    ],
+    "filter": {
+      "titleRe": "software|backend|back[- ]end|full[- ]?stack|developer|\\bsde\\b|\\bswe\\b|platform engineer|data engineer|site reliability|devops|infrastructure engineer",
+      "excludeRe": "\\bintern(ship)?\\b|co-op|apprentice|designer|product manager|recruit|sales",
+      "locationRe": "United States|\\bUSA?\\b|Remote,? ?-? ?US|Boston|Cambridge|Somerville|New York|San Francisco|Seattle|Chicago|Austin|Denver|\\b(MA|NY|CA|WA|TX|IL|CO|NJ|PA|GA|NC|VA|FL|OR|MN|AZ|UT|MD|OH|MI)\\b"
+    }
+  }
 }

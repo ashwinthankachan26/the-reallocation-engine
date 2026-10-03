@@ -119,7 +119,7 @@ export function livenessGate(classification, method) {
   if (!classification) {
     return { cleared: false, factor: null, result: 'not-checked', code: 'not-checked', reason: 'no liveness check was run for this role', source: SRC.input };
   }
-  const source = method === 'live' ? SRC.record : SRC.input;
+  const source = method === 'live' || method === 'board-api' ? SRC.record : SRC.input;
   const base = { result: classification.result, code: classification.code, reason: classification.reason, method, source };
   if (classification.result === 'active') return { cleared: true, factor: 1, ...base };
   if (classification.result === 'expired') return { cleared: true, factor: 0, ...base };
@@ -189,11 +189,122 @@ export function salaryCheck(row, blsRow) {
   };
 }
 
+// ── posting requirements (v0.2): what THIS posting asks for ─────────────────
+// Reads the posting's own text — the page the liveness check already loaded, a
+// saved snapshot, or a job-board API body. The quote is the posting's words; the
+// number taken from it and the classifications are rules on that text.
+const WORD_NUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+const YEARS_RE = /(?:at least|minimum of|min\.?)?\s*\b(\d{1,2}|one|two|three|four|five|six|seven|eight|nine|ten)\b\s*\+?\s*(?:(?:-|–|to)\s*\d{1,2}\s*\+?\s*)?(?:years?|yrs?)\b[^.\n]{0,80}?\bexperience/i;
+const NEW_GRAD_RE = /\b(new[- ]grad(uate)?s?|recent (college |university )?graduates?|entry[- ]level|early[- ]career|university grad(uate)?s?)\b/i;
+
+// The posting's own title level (found by the 2026-10-03 sweep: many senior
+// postings state no years, so the years rule alone let them through).
+const POSTING_SENIOR_RE = /\b(senior|sr\.?|staff|principal|lead|architect|manager|director|head|vp|distinguished)\b/i;
+const POSTING_FAR_LEVEL_RE = /\b(iii|iv|v|3|4|5)\b/i;   // "Software Engineer III" etc.
+const POSTING_MID_LEVEL_RE = /\b(ii|2)\b/i;
+export function titleLevel(title, source) {
+  const t = String(title || '').split('(')[0];          // drop "(Boston, MA)"-style suffixes
+  let m;
+  if ((m = t.match(POSTING_SENIOR_RE))) return { value: 'senior', matched: m[0], source, basis: `posting title contains "${m[0]}" (rule)` };
+  if ((m = t.match(POSTING_FAR_LEVEL_RE))) return { value: 'senior', matched: m[0], source, basis: `posting title level "${m[0]}" (rule)` };
+  if ((m = t.match(POSTING_MID_LEVEL_RE))) return { value: 'mid', matched: m[0], source, basis: `posting title level "${m[0]}" (rule)` };
+  return { value: 'entry-or-unstated', matched: null, source, basis: 'no level word in the posting title (rule)' };
+}
+
+export function postingRequirements(text, title, source, offTargetTerms = [], titleSource = SRC.input) {
+  const body = String(text || '');
+  if (!body.trim()) return { status: 'not-read', reason: 'no posting text available', source };
+  const m = body.match(YEARS_RE);
+  let years;
+  if (m) {
+    const n = /^\d+$/.test(m[1]) ? Number(m[1]) : WORD_NUM[m[1].toLowerCase()];
+    years = { value: n, quote: m[0].trim().replace(/\s+/g, ' '), source, basis: 'first "N years … experience" phrase in the posting text (rule)' };
+  } else if (NEW_GRAD_RE.test(body)) {
+    years = { value: 0, quote: body.match(NEW_GRAD_RE)[0], source, basis: 'no years phrase; posting names new grads / entry level (rule)' };
+  } else {
+    years = { value: null, quote: null, source, basis: 'no years phrase and no new-grad wording found: minimum not stated' };
+  }
+  const t = String(title || '');
+  const hit = offTargetTerms.find((term) => new RegExp(`\\b${term}\\b`, 'i').test(t));
+  const roleType = { value: hit ? 'off-target' : 'on-target', matched: hit || null, source: SRC.input, basis: hit ? `title contains "${hit}" (off-target list: your-input)` : 'title has no off-target term (your-input list)' };
+  return { status: 'read', years, role_type: roleType, title_level: titleLevel(t, titleSource) };
+}
+
+// The author's G5 rule, written down: count mismatches against the persona.
+// level: asks ≤ my years → 0 · asks up to `closeGap` more → 1 (close) · more → 2 (far)
+// stack: an off-target title → +1
+export function mismatchCount(reqs, myYears, closeGap) {
+  if (!reqs || reqs.status !== 'read') return { value: null, parts: [], source: SRC.model, basis: 'posting text not read' };
+  const parts = [];
+  let n = 0;
+  // level: the stricter of (years asked) and (the posting title's own level)
+  let byYears = 0, byTitle = 0;
+  const asked = reqs.years.value;
+  if (asked != null && asked > myYears) byYears = asked - myYears > closeGap ? 2 : 1;
+  const tl = reqs.title_level?.value;
+  if (tl === 'senior') byTitle = 2; else if (tl === 'mid') byTitle = 1;
+  const level = Math.max(byYears, byTitle);
+  if (level) {
+    n += level;
+    const why = [];
+    if (byYears) why.push(`asks ${asked}+ years vs my ${myYears}`);
+    if (byTitle) why.push(`title level "${reqs.title_level.matched}"`);
+    parts.push(`${why.join(' and ')} (${level === 2 ? 'far' : 'close'})`);
+  }
+  if (reqs.role_type.value === 'off-target') { n += 1; parts.push(`off-target role (${reqs.role_type.matched})`); }
+  return { value: n, parts, source: SRC.model, basis: `0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to ${closeGap} years more than mine or a II title; your-input)` };
+}
+
 // ── next action, applied AFTER the scorer (the scorer is never re-implemented) ─
-export function nextAction(recommendation, level) {
+export function nextAction(recommendation, level, mismatch = null) {
   if (recommendation === 'Skip') return { action: 'SKIP', why: 'scorer recommended Skip' };
   if (level === 'senior-only-on-list') {
     return { action: 'NETWORK', why: `scorer said ${recommendation}, but every sponsored software title on the list is senior — ask a contact whether new grads are sponsored before tailoring` };
   }
-  return { action: 'TAILOR', why: `scorer said ${recommendation} and a non-senior software title appears on the sponsored list` };
+  if (mismatch && mismatch.value != null) {
+    if (mismatch.value >= 2) return { action: 'NETWORK', why: `company sponsors at my level, but this posting is a poor fit: ${mismatch.parts.join('; ')} — network for a junior role there instead` };
+    if (mismatch.value === 1) return { action: 'QUICK-APPLY', why: `close fit: ${mismatch.parts.join('; ')} — send the template résumé and ask for a referral, don't spend tailoring hours` };
+    return { action: 'TAILOR', why: `scorer said ${recommendation}, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level` };
+  }
+  return { action: 'TAILOR', why: `scorer said ${recommendation} and a non-senior software title appears on the sponsored list (posting requirements not read — read them before tailoring)` };
+}
+
+// ── board sweep (v0.2): every open software posting on a public job board ──
+// Pure helpers for sweep.mjs; the network call lives there, these are tested offline.
+export function htmlToText(html) {
+  const ents = { amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'", nbsp: ' ' };
+  const decode = (s) => s.replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (_, k) => ents[k]);
+  return decode(decode(String(html || '')))            // Greenhouse double-escapes content
+    .replace(/<\/(p|li|div|h\d|br)>/gi, '\n').replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ').replace(/[ \t]+/g, ' ').replace(/\n\s*\n+/g, '\n').trim();
+}
+
+// Posting pages carry HR contact lines; nothing personal-looking is saved.
+export function redactContacts(text) {
+  return String(text || '')
+    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '[email removed]')
+    .replace(/(\+?1[-. ]?)?\(?\d{3}\)?[-. ]\d{3}[-. ]\d{4}/g, '[phone removed]');
+}
+
+export function selectSweepJobs(jobs, { titleRe, excludeRe, locationRe }) {
+  return (jobs || []).filter((j) => {
+    const title = String(j.title || '');
+    const loc = String(j.location?.name || '');
+    return new RegExp(titleRe, 'i').test(title) && !new RegExp(excludeRe, 'i').test(title) && new RegExp(locationRe, 'i').test(loc);
+  });
+}
+
+// ── hiring-lag sensitivity (v0.2): the same timeline gate at several lags ──
+export function lagSensitivity(args, lags) {
+  return lags.map((lag) => {
+    const t = timelineFactor({ ...args, lagDays: lag });
+    return { lag_days: lag, factor: t.factor, slack_days: t.slack_days };
+  });
+}
+
+// Latest apply date that still keeps the full buffer, per lag (persona-level).
+export function applyByDates({ eadStart, ceiling, daysUsed, bufferDays }, lags) {
+  const ead = parseDate(eadStart);
+  const lastDay = addDays(ead, ceiling - daysUsed - 1);
+  return lags.map((lag) => ({ lag_days: lag, apply_by: iso(addDays(lastDay, -(bufferDays + lag))), last_unemployment_day: iso(lastDay) }));
 }

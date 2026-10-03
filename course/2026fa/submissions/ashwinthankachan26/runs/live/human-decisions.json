@@ -1,0 +1,16 @@
+{
+  "_note": "In-sample check: these are my G5 decisions from the 2026-10-03 live run (made by hand, before v0.2 existed), and v0.2's rule was written FROM them, so agreement here shows the rule encodes my decisions — not that it generalizes. The sweep run is the out-of-sample check.",
+  "decided_by": "Ashwin S Thankachan",
+  "decided_on": "2026-10-03",
+  "decisions": {
+    "L01-pathai": "TAILOR",
+    "L02-vestmark": "QUICK-APPLY",
+    "L03-klaviyo": "NETWORK",
+    "L04-coherehealth": "QUICK-APPLY",
+    "L05-lendbuzz": "QUICK-APPLY",
+    "L06-formlabs": "NETWORK",
+    "L07-toast": "NETWORK",
+    "L08-simplisafe": "RESEARCH",
+    "L09-vestmark-badid": "n/a"
+  }
+}

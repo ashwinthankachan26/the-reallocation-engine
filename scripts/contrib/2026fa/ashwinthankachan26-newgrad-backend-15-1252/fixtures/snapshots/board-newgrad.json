@@ -1,0 +1,9 @@
+{
+  "_note": "TEST fixture (fictional text): a new-grad posting with no years phrase.",
+  "board_listing": {
+    "host": "boards-api.greenhouse.io",
+    "fetched_at": "2026-10-03T00:00:00Z",
+    "job_id": 4
+  },
+  "bodyText": "Software Engineer I. This role is open to new grads graduating in December 2026. You will design and operate backend services in Java and Python, write tests, review code, and work with product teams. Benefits include health insurance and a learning budget."
+}

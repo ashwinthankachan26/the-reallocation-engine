@@ -1,0 +1,51 @@
+{
+  "_note": "TEST fixture: fictional Greenhouse board API response (shape of /v1/boards/<token>/jobs?content=true). Contact details are fake and exist to prove redaction.",
+  "jobs": [
+    {
+      "id": 101,
+      "title": "Software Engineer I",
+      "location": {
+        "name": "Boston, MA"
+      },
+      "absolute_url": "https://job-boards.greenhouse.io/example/jobs/101",
+      "updated_at": "2026-10-01T00:00:00Z",
+      "content": "&lt;p&gt;Build backend services.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;2+ years of professional software engineering experience&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Accommodations: jobs-help@example.com or 212-555-0100 / (617) 555-0199&lt;/p&gt;"
+    },
+    {
+      "id": 102,
+      "title": "Software Engineering Intern",
+      "location": {
+        "name": "Boston, MA"
+      },
+      "absolute_url": "x",
+      "content": ""
+    },
+    {
+      "id": 103,
+      "title": "Senior Backend Engineer",
+      "location": {
+        "name": "Dublin, Ireland"
+      },
+      "absolute_url": "x",
+      "content": ""
+    },
+    {
+      "id": 104,
+      "title": "Sales Engineer",
+      "location": {
+        "name": "Remote, US"
+      },
+      "absolute_url": "x",
+      "content": ""
+    },
+    {
+      "id": 105,
+      "title": "Staff Software Engineer",
+      "location": {
+        "name": "Remote, US"
+      },
+      "absolute_url": "x",
+      "content": ""
+    }
+  ]
+}
