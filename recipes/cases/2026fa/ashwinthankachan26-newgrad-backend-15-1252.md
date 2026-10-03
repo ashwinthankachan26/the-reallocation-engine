@@ -182,6 +182,7 @@ Timeline arithmetic: last unemployment day = EAD start + (ceiling − days used)
 | `validate-h1b-join-sample.py` needs full data | Not called. Only the shipped CSV is used. |
 | *(found in this work)* The scorer reads "authorized" as "no sponsorship needed" | The scorer is called without `--profile`. Reported upstream as proposed addition #5. |
 | *(found in this work)* A missing `liveness` field defaults to 1.0 in the scorer | The prototype always writes the field and never sends an unchecked role. |
+| *(found in this work)* `npm run ats:scan -- --dry-run` (Canvas "Before you start") fails on a fresh clone: `Error: portals.yml not found. Run onboarding first.` (`data/ats/portals.yml` is gitignored; only `portals.example.yml` ships) | Not used. Liveness goes through `liveness-core.mjs` / `liveness-browser.mjs` directly, and candidate postings come from a roles file or `sweep.mjs`. |
 
 ## Proposed additions
 

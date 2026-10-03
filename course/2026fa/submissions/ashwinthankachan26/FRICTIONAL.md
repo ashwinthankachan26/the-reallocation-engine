@@ -40,6 +40,7 @@ This is an honest log of building a job-search triage tool over three days with 
 | 22 | 10-03 | **[A]** judged 6 seeded sweep postings blind | close to 7/8 | **3/6**: I SKIP far roles (12+, 8+ years) the tool sends to NETWORK; the tool missed "12+ years **in** the SDLC" (no word "experience"); it's stricter than me on a 2+ year II role | `human-decisions-oos.json` |
 | 23 | 10-03 | **[A]** corrected the persona: 1 year experience (1 yr full-time + 4-month co-op), STEM-eligible; **[C]** re-ran live + sweep triage at my request | small changes | live still 7/8; sweep NETWORK 57 · QUICK-APPLY 7 · TAILOR 2 · RESEARCH 14; out-of-sample still 3/6 | `9df24c6` |
 | 24 | 10-03 | **[C]** re-read SNICKERDOODLE: "any edit to the recipe or its scripts after attestation voids it" | — | my v0.1 attestation doesn't cover v0.2 → kept it as the v0.1 record and added a v0.2 attestation for me to sign | WORKED-RUN |
+| 25 | 10-03 | **[A]** ran the Canvas "Before you start" engine commands (late: I hadn't run them on day 1) | both work | `npm run score` ✓; **`ats:scan --dry-run` fails on a fresh clone** (`portals.yml not found`) → recorded as a new fact that bites in the recipe | `engine-baseline-…`, TEST-REPORT §0 |
 
 ## 2. What I checked, changed, or learned in response
 

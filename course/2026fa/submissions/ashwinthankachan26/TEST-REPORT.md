@@ -18,6 +18,18 @@ Clean-checkout command (run by me):
 C="$(mktemp -d)/clean" && git clone -q --branch contrib/2026fa-ashwinthankachan26-newgrad-backend-15-1252 ~/Desktop/the-reallocation-engine "$C" && cd "$C" && npm install --no-audit --no-fund
 ```
 
+## 0. Engine commands from the Canvas "Before you start" list (run by me, 2026-10-03)
+
+```text
+> node scripts/ats/scan.mjs --dry-run
+Error: portals.yml not found. Run onboarding first.
+
+> node scripts/score/role-scorer.mjs data/examples/ch11-roles.json --out-dir /var/folders/…/tmp.7bdemnAuxO
+✓ scored 5 roles → Apply 2 · Consider 1 · Skip 2 (skip 40%)
+```
+
+`npm run score` works (always with `--out-dir`, so the tracked example output isn't overwritten). `npm run ats:scan -- --dry-run` fails on a fresh clone because `data/ats/portals.yml` is gitignored and only `portals.example.yml` ships. The recipe records this as a fact that bites and doesn't depend on `ats:scan`. `npm run ats:liveness -- <url>` isn't needed separately: the prototype calls the same `checkUrlLiveness()` in `--live` mode.
+
 ## 1. Toolchain baseline
 
 | Check | Before (015843d) | After (11f0a43, clean checkout) |
