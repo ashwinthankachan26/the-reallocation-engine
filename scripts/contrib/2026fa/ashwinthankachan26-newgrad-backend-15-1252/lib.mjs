@@ -126,6 +126,18 @@ export function livenessGate(classification, method) {
   return { cleared: false, factor: null, ...base };
 }
 
+// ── live-mode host allowlist: the recipe names every host a live run may open ─
+// An entry starting with "." matches that domain and its subdomains; anything
+// else must match the hostname exactly. A malformed URL is never allowed.
+export function hostAllowed(url, allowlist = []) {
+  let host;
+  try { host = new URL(url).hostname.toLowerCase(); } catch { return false; }
+  return allowlist.some((entry) => {
+    const e = String(entry).toLowerCase();
+    return e.startsWith('.') ? host === e.slice(1) || host.endsWith(e) : host === e;
+  });
+}
+
 // ── timeline gate ──────────────────────────────────────────────────────────
 const DAY = 86400000;
 export const parseDate = (s) => {

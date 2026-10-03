@@ -32,7 +32,7 @@ node --test scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/tr
 
 Name the test **file**: `node --test <folder>` fails on Node 22+.
 
-Live run on your own role list (opens each URL with the repo's Playwright checker, one at a time, and contacts only the hosts in that list):
+Live run on your own role list. It opens each URL with the repo's Playwright checker, one at a time, and only if the URL's host is in `config.json` → `live_hosts` (`job-boards.greenhouse.io`, `boards.greenhouse.io`, `jobs.lever.co`, `jobs.ashbyhq.com`, and the careers sites Greenhouse redirected to on 2026-10-03: `www.pathai.com`, `www.klaviyo.com`, `careers.toasttab.com`, `careers.formlabs.com`):
 
 ```bash
 node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles <your-roles.json> --live --out-dir course/2026fa/submissions/ashwinthankachan26/runs/live
@@ -84,6 +84,7 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mj
 | CSV row has no approvals | `RESEARCH` · `no-approval-data` — unknown, not "does not sponsor" |
 | Approvals exist but no software title is listed | `RESEARCH` · `no-software-title-listed` |
 | Posting not checked, or checker unsure | `CHECK-LIVENESS` — never treated as live |
+| `--live` URL on a host not in `live_hosts` | `CHECK-LIVENESS` · `host-not-allowed`; the page is never opened |
 | Posting closed | scored with liveness ×0 → `SKIP` |
 | Start date would land after the unemployment limit | timeline ×0 → `SKIP` |
 | Persona missing an EAD date, bad JSON, bad date | exit 2 with a message; nothing written |
@@ -95,3 +96,5 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mj
 - The scorer is called **without** `--profile`: an authorization string containing "authorized" makes it drop the sponsorship weight to 0.
 - Sponsored titles are the CSV's top few only; "senior-only" means senior-only *on that list*.
 - Salary is national and company-wide, not Boston-adjusted or role-specific.
+- The allowlist checks the URL you give it. Redirect targets are named in `live_hosts` but not re-checked by the code, and a page can still load scripts and images from other hosts.
+- The software-title regex misses titles like "Full Stack Engineer" (no "software"/"backend"/"developer" word); such a title is not counted toward level fit.

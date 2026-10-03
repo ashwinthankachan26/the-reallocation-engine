@@ -22,7 +22,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   SRC, parseCsv, indexCompanies, lookupCompany, parseTitles, sponsorshipFromRow,
-  levelFit, livenessGate, timelineFactor, salaryCheck, nextAction, parseDate,
+  levelFit, livenessGate, timelineFactor, salaryCheck, nextAction, parseDate, hostAllowed,
 } from './lib.mjs';
 import { classifyLiveness } from '../../../ats/liveness-core.mjs';
 
@@ -90,6 +90,8 @@ if (path.resolve(outDir).startsWith(path.join(ROOT, 'data'))) fail('refusing to 
 const sponsorRules = config.sponsorship;
 const { hiring_lag_days: lagDays, buffer_days: bufferDays } = config.timeline;
 const targetSoc = config.target_soc;
+const liveHosts = config.live_hosts || [];
+if (live && liveHosts.length === 0) fail('--live needs config.live_hosts: the recipe must name every host a live run may open');
 
 // ── data ────────────────────────────────────────────────────────────────────
 const index = indexCompanies(parseCsv(fs.readFileSync(csvPath, 'utf8')));
@@ -102,6 +104,10 @@ if (!blsRow) gaps.push(`no BLS row for SOC ${targetSoc}.00 — salary check skip
 async function livenessFor(role) {
   if (live) {
     if (!role.url) return livenessGate(null);
+    if (!hostAllowed(role.url, liveHosts)) {
+      // never opened: the host is not one the recipe names
+      return { ...livenessGate(null), code: 'host-not-allowed', reason: `host of ${role.url} is not in config.live_hosts` };
+    }
     const { checkUrlLiveness } = await import(pathToFileURL(path.join(ROOT, 'scripts/ats/liveness-browser.mjs')).href);
     return { checker: checkUrlLiveness };
   }
@@ -225,6 +231,7 @@ const log = {
     timeline: { hiring_lag_days: lagDays, buffer_days: bufferDays },
     visa: { ead_start_date: visa.ead_start_date, unemployment_ceiling: visa.unemployment_ceiling, unemployment_days_used: visa.unemployment_days_used },
     target_soc: targetSoc,
+    live_hosts: liveHosts,
   },
   scorer_stdout: scorerStdout,
   counts,

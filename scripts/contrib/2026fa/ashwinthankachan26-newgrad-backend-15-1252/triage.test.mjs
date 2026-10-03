@@ -13,7 +13,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
   SRC, parseCsv, normalizeName, indexCompanies, lookupCompany, parseTitles,
-  sponsorshipFromRow, levelFit, livenessGate, timelineFactor, nextAction,
+  sponsorshipFromRow, levelFit, livenessGate, timelineFactor, nextAction, hostAllowed,
 } from './lib.mjs';
 import { classifyLiveness } from '../../../ats/liveness-core.mjs';
 
@@ -96,6 +96,16 @@ test('timeline gate: comfortable, squeezed, impossible, and refusing a missing E
   assert.equal(timelineFactor({ ...base, daysUsed: 80, applyDate: '2026-10-02' }).factor, 0.3);   // 10 days left → slack 9
   assert.equal(timelineFactor({ ...base, daysUsed: 90, applyDate: '2026-10-02' }).factor, 0);     // every day used
   assert.throws(() => timelineFactor({ ...base, eadStart: null, applyDate: '2026-10-02' }), /refusing to default/);
+});
+
+test('live host allowlist: exact hosts, dot-suffix domains, nothing else', () => {
+  const list = ['job-boards.greenhouse.io', '.myworkdayjobs.com'];
+  assert.equal(hostAllowed('https://job-boards.greenhouse.io/vestmark/jobs/8009953', list), true);
+  assert.equal(hostAllowed('https://acme.wd5.myworkdayjobs.com/en-US/careers/job/1', list), true);
+  assert.equal(hostAllowed('https://greenhouse.io.evil.example.com/jobs/1', list), false);   // look-alike host
+  assert.equal(hostAllowed('https://boards.greenhouse.io/x/jobs/1', list), false);          // not named → not opened
+  assert.equal(hostAllowed('not a url', list), false);
+  assert.equal(hostAllowed('https://job-boards.greenhouse.io/x', []), false);               // empty list allows nothing
 });
 
 test('next action: senior-only reroutes to NETWORK, Skip always wins', () => {

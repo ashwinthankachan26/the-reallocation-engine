@@ -1,0 +1,23 @@
+{
+  "_note": "LIVE run input. Real public postings found on 2026-10-03 by Claude through the public Greenhouse/Lever job-board APIs (boards-api.greenhouse.io, api.lever.co); chosen by Ashwin to cover each route. No personal data. r09 is a deliberately invalid job ID used to exercise the live expired path; it is not a real posting.",
+  "roles": [
+    { "role_id": "L01-pathai", "company": "PathAI", "title": "Software Engineer I, Fullstack (Boston, Hybrid)",
+      "url": "https://job-boards.greenhouse.io/pathai/jobs/8696764002" },
+    { "role_id": "L02-vestmark", "company": "Vestmark", "title": "Software Engineer (Boston, Hybrid)",
+      "url": "https://job-boards.greenhouse.io/vestmark/jobs/8009953" },
+    { "role_id": "L03-klaviyo", "company": "Klaviyo", "title": "Full Stack Software Engineer - People Systems (Boston)",
+      "url": "https://job-boards.greenhouse.io/klaviyo/jobs/7727703003" },
+    { "role_id": "L04-coherehealth", "company": "Cohere Health", "title": "Software Engineer II (United States)",
+      "url": "https://job-boards.greenhouse.io/coherehealth/jobs/7930480003" },
+    { "role_id": "L05-lendbuzz", "company": "Lendbuzz", "title": "Full-Stack Engineer (Backend) (Boston)",
+      "url": "https://jobs.lever.co/lendbuzz/a19330a3-380a-45ad-b388-c98c33ef0db3" },
+    { "role_id": "L06-formlabs", "company": "Formlabs", "title": "Software Engineer, E-commerce (Somerville)",
+      "url": "https://job-boards.greenhouse.io/formlabs/jobs/7506561" },
+    { "role_id": "L07-toast", "company": "Toast", "title": "Software Engineer II, Android (Remote, US)",
+      "url": "https://job-boards.greenhouse.io/toast/jobs/8224111" },
+    { "role_id": "L08-simplisafe", "company": "SimpliSafe", "title": "Software Engineer I - User Systems (Boston)",
+      "url": "https://job-boards.greenhouse.io/simplisafe/jobs/8095181" },
+    { "role_id": "L09-vestmark-badid", "company": "Vestmark", "title": "Deliberately invalid job ID (expired-path test)",
+      "url": "https://job-boards.greenhouse.io/vestmark/jobs/1" }
+  ]
+}

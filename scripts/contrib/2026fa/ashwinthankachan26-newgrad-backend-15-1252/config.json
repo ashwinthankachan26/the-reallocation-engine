@@ -10,5 +10,16 @@
   "timeline": {
     "hiring_lag_days": 45,
     "buffer_days": 30
-  }
+  },
+  "_live_hosts_note": "Every host a --live run may open. Job-board hosts plus the company careers sites Greenhouse redirected to on 2026-10-03 (curl -L check). The code checks the starting URL's host; redirect targets are listed here so the recipe names them, but the code does not re-check them, and pages may still load scripts/assets from other hosts.",
+  "live_hosts": [
+    "job-boards.greenhouse.io",
+    "boards.greenhouse.io",
+    "jobs.lever.co",
+    "jobs.ashbyhq.com",
+    "www.pathai.com",
+    "www.klaviyo.com",
+    "careers.toasttab.com",
+    "careers.formlabs.com"
+  ]
 }

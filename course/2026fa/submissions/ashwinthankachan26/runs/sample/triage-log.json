@@ -28,7 +28,17 @@
       "unemployment_ceiling": 90,
       "unemployment_days_used": 0
     },
-    "target_soc": "15-1252"
+    "target_soc": "15-1252",
+    "live_hosts": [
+      "job-boards.greenhouse.io",
+      "boards.greenhouse.io",
+      "jobs.lever.co",
+      "jobs.ashbyhq.com",
+      "www.pathai.com",
+      "www.klaviyo.com",
+      "careers.toasttab.com",
+      "careers.formlabs.com"
+    ]
   },
   "scorer_stdout": "✓ scored 5 roles → Apply 2 · Consider 1 · Skip 2 (skip 40%)\n  course/2026fa/submissions/ashwinthankachan26/runs/sample/role-scores.json  +  course/2026fa/submissions/ashwinthankachan26/runs/sample/role-scores.md",
   "counts": {
