@@ -1,0 +1,128 @@
+[
+  {
+    "role_id": "L01-pathai",
+    "company": "PathAI",
+    "title": "Software Engineer I, Fullstack (Boston, Hybrid)",
+    "sponsorship": {
+      "p": 0.9,
+      "tier": "Proven",
+      "source": "model-judgment"
+    },
+    "liveness": {
+      "factor": 1,
+      "source": "record"
+    },
+    "timeline": {
+      "factor": 1,
+      "source": "your-input"
+    }
+  },
+  {
+    "role_id": "L02-vestmark",
+    "company": "Vestmark",
+    "title": "Software Engineer (Boston, Hybrid)",
+    "sponsorship": {
+      "p": 0.9,
+      "tier": "Proven",
+      "source": "model-judgment"
+    },
+    "liveness": {
+      "factor": 1,
+      "source": "record"
+    },
+    "timeline": {
+      "factor": 1,
+      "source": "your-input"
+    }
+  },
+  {
+    "role_id": "L03-klaviyo",
+    "company": "Klaviyo",
+    "title": "Full Stack Software Engineer - People Systems (Boston)",
+    "sponsorship": {
+      "p": 0.9,
+      "tier": "Proven",
+      "source": "model-judgment"
+    },
+    "liveness": {
+      "factor": 1,
+      "source": "record"
+    },
+    "timeline": {
+      "factor": 1,
+      "source": "your-input"
+    }
+  },
+  {
+    "role_id": "L04-coherehealth",
+    "company": "Cohere Health",
+    "title": "Software Engineer II (United States)",
+    "sponsorship": {
+      "p": 0.9,
+      "tier": "Proven",
+      "source": "model-judgment"
+    },
+    "liveness": {
+      "factor": 1,
+      "source": "record"
+    },
+    "timeline": {
+      "factor": 1,
+      "source": "your-input"
+    }
+  },
+  {
+    "role_id": "L05-lendbuzz",
+    "company": "Lendbuzz",
+    "title": "Full-Stack Engineer (Backend) (Boston)",
+    "sponsorship": {
+      "p": 0.9,
+      "tier": "Proven",
+      "source": "model-judgment"
+    },
+    "liveness": {
+      "factor": 1,
+      "source": "record"
+    },
+    "timeline": {
+      "factor": 1,
+      "source": "your-input"
+    }
+  },
+  {
+    "role_id": "L07-toast",
+    "company": "Toast",
+    "title": "Software Engineer II, Android (Remote, US)",
+    "sponsorship": {
+      "p": 0.9,
+      "tier": "Proven",
+      "source": "model-judgment"
+    },
+    "liveness": {
+      "factor": 1,
+      "source": "record"
+    },
+    "timeline": {
+      "factor": 1,
+      "source": "your-input"
+    }
+  },
+  {
+    "role_id": "L09-vestmark-badid",
+    "company": "Vestmark",
+    "title": "Deliberately invalid job ID (expired-path test)",
+    "sponsorship": {
+      "p": 0.9,
+      "tier": "Proven",
+      "source": "model-judgment"
+    },
+    "liveness": {
+      "factor": 0,
+      "source": "record"
+    },
+    "timeline": {
+      "factor": 1,
+      "source": "your-input"
+    }
+  }
+]

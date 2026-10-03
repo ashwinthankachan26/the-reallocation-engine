@@ -8,8 +8,8 @@
   "target_role": {
     "primary": "New-grad Backend Software Engineer (Java / Spring Boot, Python)",
     "soc": "15-1252",
-    "experience_years": 0,
-    "_experience_note": "your-input: new graduate; internships not counted as professional years."
+    "experience_years": 1,
+    "_experience_note": "your-input: 1 year full-time + a 4-month co-op \u2248 1.3, rounded down to 1. A master's is not counted as years (some postings accept 'or MS + N years'; the tool does not read that)."
   },
   "visa": {
     "type": "F-1",
@@ -18,7 +18,7 @@
     "ead_start_date": "2027-02-01",
     "unemployment_ceiling": 90,
     "unemployment_days_used": 0,
-    "stem_eligible": null,
-    "notes": "EAD start date is a planned request, not an approval. stem_eligible is unconfirmed."
+    "stem_eligible": true,
+    "notes": "EAD start date is a planned request, not an approval. STEM-designated MS (your-input; confirm the CIP code on the I-20 with the international office). Year-1 OPT keeps the 90-day unemployment limit, which is what the timeline gate uses; the STEM extension adds 24 months and 60 more days but requires an E-Verify employer, which no repo data can check."
   }
 }

@@ -1,0 +1,21 @@
+{
+  "_note": "Out-of-sample check: 6 postings drawn by Claude from the 80-posting sweep (seed 20261003; stratified 2 TAILOR/QUICK-APPLY, 3 NETWORK, 1 RESEARCH by the tool's v0.2 output; shuffled). Ashwin decided each from the posting BEFORE seeing the tool's answer. The rule was NOT changed after seeing these.",
+  "decided_by": "Ashwin S Thankachan",
+  "decided_on": "2026-10-03",
+  "decisions": {
+    "S-coherehealth-7870427003": "SKIP",
+    "S-klaviyo-7597868003": "NETWORK",
+    "S-klaviyo-7855793003": "TAILOR",
+    "S-simplisafe-7982252": "SKIP",
+    "S-formlabs-7909577": "QUICK-APPLY",
+    "S-toast-8233154": "NETWORK"
+  },
+  "reasons": {
+    "S-coherehealth-7870427003": "12+ years \u2014 far beyond me",
+    "S-klaviyo-7597868003": "5+ years, senior",
+    "S-klaviyo-7855793003": "2+ years; I have ~1 and would stretch",
+    "S-simplisafe-7982252": "8+ years and no sponsorship data",
+    "S-formlabs-7909577": "embedded is not my stack \u2014 quick apply at most",
+    "S-toast-8233154": "too senior; network for a different role at Toast"
+  }
+}

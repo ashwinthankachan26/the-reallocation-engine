@@ -1,0 +1,1498 @@
+{
+  "_recipe": "recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md",
+  "recipe_version": "0.2.0",
+  "run_date": "2026-10-03",
+  "mode": "live",
+  "inputs": {
+    "roles": "course/2026fa/submissions/ashwinthankachan26/runs/live/roles.live.json",
+    "persona": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/persona.newgrad.json",
+    "config": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/config.json",
+    "csv": "data/80-days-to-stay/80-days-csv/mapped_student_employment_targets_v3.csv",
+    "bls": "data/bls/compact/soc_occupation_compact.csv",
+    "scorer": "scripts/score/role-scorer.mjs"
+  },
+  "assumptions": {
+    "source": "your-input",
+    "sponsorship": {
+      "proven_min_approvals": 10,
+      "proven_min_rate": 90,
+      "p_proven": 0.9,
+      "p_likely": 0.6
+    },
+    "timeline": {
+      "hiring_lag_days": 45,
+      "buffer_days": 30
+    },
+    "visa": {
+      "ead_start_date": "2027-02-01",
+      "unemployment_ceiling": 90,
+      "unemployment_days_used": 0
+    },
+    "target_soc": "15-1252",
+    "live_hosts": [
+      "job-boards.greenhouse.io",
+      "boards.greenhouse.io",
+      "jobs.lever.co",
+      "jobs.ashbyhq.com",
+      "www.pathai.com",
+      "www.klaviyo.com",
+      "careers.toasttab.com",
+      "careers.formlabs.com"
+    ],
+    "requirements": {
+      "_note": "v0.2 posting-requirements rule = the author's own G5 rule from the 2026-10-03 live run, written down. close_gap_years: a posting asking up to this many years more than mine is 'close' (quick apply); more is 'far' (network).",
+      "close_gap_years": 3,
+      "off_target_title_terms": [
+        "android",
+        "ios",
+        "mobile",
+        "embedded",
+        "firmware",
+        "frontend",
+        "front-end",
+        "hardware",
+        "sdet",
+        "designer"
+      ],
+      "my_experience_years": 1
+    },
+    "lag_scenarios": [
+      30,
+      45,
+      60
+    ]
+  },
+  "apply_by": [
+    {
+      "lag_days": 30,
+      "apply_by": "2027-03-02",
+      "last_unemployment_day": "2027-05-01"
+    },
+    {
+      "lag_days": 45,
+      "apply_by": "2027-02-15",
+      "last_unemployment_day": "2027-05-01"
+    },
+    {
+      "lag_days": 60,
+      "apply_by": "2027-01-31",
+      "last_unemployment_day": "2027-05-01"
+    }
+  ],
+  "human_agreement": {
+    "source": "your-input",
+    "file": "course/2026fa/submissions/ashwinthankachan26/runs/live/human-decisions.json",
+    "note": "In-sample check: these are my G5 decisions from the 2026-10-03 live run (made by hand, before v0.2 existed), and v0.2's rule was written FROM them, so agreement here shows the rule encodes my decisions — not that it generalizes. The sweep run is the out-of-sample check.",
+    "compared": 8,
+    "matched": 7,
+    "rows": [
+      {
+        "role_id": "L01-pathai",
+        "human": "TAILOR",
+        "tool": "TAILOR",
+        "match": true
+      },
+      {
+        "role_id": "L02-vestmark",
+        "human": "QUICK-APPLY",
+        "tool": "QUICK-APPLY",
+        "match": true
+      },
+      {
+        "role_id": "L03-klaviyo",
+        "human": "NETWORK",
+        "tool": "NETWORK",
+        "match": true
+      },
+      {
+        "role_id": "L04-coherehealth",
+        "human": "QUICK-APPLY",
+        "tool": "QUICK-APPLY",
+        "match": true
+      },
+      {
+        "role_id": "L05-lendbuzz",
+        "human": "QUICK-APPLY",
+        "tool": "QUICK-APPLY",
+        "match": true
+      },
+      {
+        "role_id": "L06-formlabs",
+        "human": "NETWORK",
+        "tool": "CHECK-LIVENESS",
+        "match": false
+      },
+      {
+        "role_id": "L07-toast",
+        "human": "NETWORK",
+        "tool": "NETWORK",
+        "match": true
+      },
+      {
+        "role_id": "L08-simplisafe",
+        "human": "RESEARCH",
+        "tool": "RESEARCH",
+        "match": true
+      }
+    ]
+  },
+  "scorer_stdout": "✓ scored 7 roles → Apply 6 · Consider 0 · Skip 1 (skip 14%)\n  course/2026fa/submissions/ashwinthankachan26/runs/live-v0.2/role-scores.json  +  course/2026fa/submissions/ashwinthankachan26/runs/live-v0.2/role-scores.md",
+  "counts": {
+    "TAILOR": 1,
+    "QUICK-APPLY": 3,
+    "NETWORK": 2,
+    "CHECK-LIVENESS": 1,
+    "RESEARCH": 1,
+    "SKIP": 1
+  },
+  "gaps": [],
+  "gates": [
+    {
+      "gate": "G1 input",
+      "status": "passed (machine)",
+      "detail": "9 roles parsed"
+    },
+    {
+      "gate": "G2 sponsorship evidence",
+      "status": "awaiting human",
+      "detail": "confirm each CSV match is the right company"
+    },
+    {
+      "gate": "G3 liveness",
+      "status": "awaiting human",
+      "detail": "confirm snapshot/live results; CHECK-LIVENESS roles need a check"
+    },
+    {
+      "gate": "G4 timeline",
+      "status": "awaiting human",
+      "detail": "confirm EAD date and hiring-lag assumption still hold"
+    },
+    {
+      "gate": "G5 decision",
+      "status": "awaiting human",
+      "detail": "the person marks tailor / network / skip; the tool does not apply"
+    }
+  ],
+  "roles": [
+    {
+      "role_id": "L01-pathai",
+      "company": "PathAI",
+      "title": "Software Engineer I, Fullstack (Boston, Hybrid)",
+      "url": "https://job-boards.greenhouse.io/pathai/jobs/8696764002",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "pathai",
+        "candidates": [
+          "PATHAI INC"
+        ],
+        "company_name": {
+          "value": "PATHAI INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 78,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 97.5,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 78 approvals at 97.5% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "1 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Software Engineer I"
+        ],
+        "titles_seen": [
+          "Software Engineer I",
+          "Director of Engineering",
+          "Machine Learning Engineer III",
+          "Senior Machine Learning Engineer",
+          "Machine Learning Engineer II"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 145600,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 1.094,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "live",
+        "source": "record",
+        "checked_at": "2026-10-03T19:12:12.974Z"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "quote": null,
+          "source": "record",
+          "basis": "no years phrase and no new-grad wording found: minimum not stated"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-03",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0.315,
+        "recommendation": "Apply",
+        "reason": "composite 0.315 ≥ 0.3, gates healthy",
+        "arithmetic": "(0.9·0.35) × 1 × 1 = 0.315"
+      },
+      "next_action": {
+        "action": "TAILOR",
+        "why": "scorer said Apply, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "L02-vestmark",
+      "company": "Vestmark",
+      "title": "Software Engineer (Boston, Hybrid)",
+      "url": "https://job-boards.greenhouse.io/vestmark/jobs/8009953",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "vestmark",
+        "candidates": [
+          "VESTMARK INC"
+        ],
+        "company_name": {
+          "value": "VESTMARK INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 52,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 52 approvals at 100% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "1 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Software Engineer"
+        ],
+        "titles_seen": [
+          "Software Engineer",
+          "Senior QA Automation Engineer"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 117101,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.88,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "live",
+        "source": "record",
+        "checked_at": "2026-10-03T19:12:15.138Z"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": 2,
+          "quote": "2-4 years of professional software engineering experience",
+          "source": "record",
+          "basis": "first \"N years … experience\" phrase in the posting text (rule)"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 1,
+        "parts": [
+          "asks 2+ years vs my 1 (close)"
+        ],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-03",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0.315,
+        "recommendation": "Apply",
+        "reason": "composite 0.315 ≥ 0.3, gates healthy",
+        "arithmetic": "(0.9·0.35) × 1 × 1 = 0.315"
+      },
+      "next_action": {
+        "action": "QUICK-APPLY",
+        "why": "close fit: asks 2+ years vs my 1 (close) — send the template résumé and ask for a referral, don't spend tailoring hours",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "L03-klaviyo",
+      "company": "Klaviyo",
+      "title": "Full Stack Software Engineer - People Systems (Boston)",
+      "url": "https://job-boards.greenhouse.io/klaviyo/jobs/7727703003",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "klaviyo",
+        "candidates": [
+          "KLAVIYO INC"
+        ],
+        "company_name": {
+          "value": "KLAVIYO INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 154,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 97.46835443037976,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 154 approvals at 97.46835443037976% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "2 software title(s) in the top-titles list, 1 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Software Engineer II",
+          "Senior Software Engineer"
+        ],
+        "titles_seen": [
+          "Business Intelligence Engineer",
+          "Software Engineer II",
+          "Engineering Manager Data Exchange",
+          "Engineering Manager II- SMS",
+          "Senior Software Engineer"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 126000,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.947,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "live",
+        "source": "record",
+        "checked_at": "2026-10-03T19:12:19.172Z"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": 5,
+          "quote": "5+ years of engineering or data engineering experience",
+          "source": "record",
+          "basis": "first \"N years … experience\" phrase in the posting text (rule)"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 2,
+        "parts": [
+          "asks 5+ years vs my 1 (far)"
+        ],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-03",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0.315,
+        "recommendation": "Apply",
+        "reason": "composite 0.315 ≥ 0.3, gates healthy",
+        "arithmetic": "(0.9·0.35) × 1 × 1 = 0.315"
+      },
+      "next_action": {
+        "action": "NETWORK",
+        "why": "company sponsors at my level, but this posting is a poor fit: asks 5+ years vs my 1 (far) — network for a junior role there instead",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "L04-coherehealth",
+      "company": "Cohere Health",
+      "title": "Software Engineer II (United States)",
+      "url": "https://job-boards.greenhouse.io/coherehealth/jobs/7930480003",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "coherehealth",
+        "candidates": [
+          "COHERE HEALTH INC"
+        ],
+        "company_name": {
+          "value": "COHERE HEALTH INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 104,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 98.1132075471698,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 104 approvals at 98.1132075471698% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "2 software title(s) in the top-titles list, 1 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Senior Software Engineer, Platform",
+          "Software Engineer II"
+        ],
+        "titles_seen": [
+          "Engineering Manager",
+          "Senior Software Engineer, Platform",
+          "Senior Machine Learning DevOps Engineer",
+          "Software Engineer II",
+          "Machine Learning Engineer"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 160000,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 1.202,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "live",
+        "source": "record",
+        "checked_at": "2026-10-03T19:12:21.415Z"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": 2,
+          "quote": "2+ years of professional software engineering experience",
+          "source": "record",
+          "basis": "first \"N years … experience\" phrase in the posting text (rule)"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "mid",
+          "matched": "II",
+          "source": "your-input",
+          "basis": "posting title level \"II\" (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 1,
+        "parts": [
+          "asks 2+ years vs my 1 and title level \"II\" (close)"
+        ],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-03",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0.315,
+        "recommendation": "Apply",
+        "reason": "composite 0.315 ≥ 0.3, gates healthy",
+        "arithmetic": "(0.9·0.35) × 1 × 1 = 0.315"
+      },
+      "next_action": {
+        "action": "QUICK-APPLY",
+        "why": "close fit: asks 2+ years vs my 1 and title level \"II\" (close) — send the template résumé and ask for a referral, don't spend tailoring hours",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "L05-lendbuzz",
+      "company": "Lendbuzz",
+      "title": "Full-Stack Engineer (Backend) (Boston)",
+      "url": "https://jobs.lever.co/lendbuzz/a19330a3-380a-45ad-b388-c98c33ef0db3",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "lendbuzz",
+        "candidates": [
+          "LENDBUZZ INC"
+        ],
+        "company_name": {
+          "value": "LENDBUZZ INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 60,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 60 approvals at 100% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "2 software title(s) in the top-titles list, 1 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Senior Software Engineer",
+          "Software Engineer"
+        ],
+        "titles_seen": [
+          "Full Stack Engineer",
+          "Senior Software Engineer",
+          "Machine Learning Engineer",
+          "Software Engineer"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 125000,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.939,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "live",
+        "source": "record",
+        "checked_at": "2026-10-03T19:12:23.749Z"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": 3,
+          "quote": "3+ years of backend development experience",
+          "source": "record",
+          "basis": "first \"N years … experience\" phrase in the posting text (rule)"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 1,
+        "parts": [
+          "asks 3+ years vs my 1 (close)"
+        ],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-03",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0.315,
+        "recommendation": "Apply",
+        "reason": "composite 0.315 ≥ 0.3, gates healthy",
+        "arithmetic": "(0.9·0.35) × 1 × 1 = 0.315"
+      },
+      "next_action": {
+        "action": "QUICK-APPLY",
+        "why": "close fit: asks 3+ years vs my 1 (close) — send the template résumé and ask for a referral, don't spend tailoring hours",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "L06-formlabs",
+      "company": "Formlabs",
+      "title": "Software Engineer, E-commerce (Somerville)",
+      "url": "https://job-boards.greenhouse.io/formlabs/jobs/7506561",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "formlabs",
+        "candidates": [
+          "FORMLABS INC"
+        ],
+        "company_name": {
+          "value": "FORMLABS INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 70,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 87.5,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Likely",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 70 approvals at 87.5% → Likely (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.6,
+          "source": "model-judgment",
+          "basis": "tier Likely → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "1 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Software Engineer"
+        ],
+        "titles_seen": [
+          "Systems Integration Engineer",
+          "Optical Engineer",
+          "Customer Team Strategy and Operations Lead",
+          "Strategy and Operations Lead",
+          "Software Engineer"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 111000,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.834,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": false,
+        "factor": null,
+        "result": "uncertain",
+        "code": "no_apply_control",
+        "reason": "content present but no visible apply control found",
+        "method": "live",
+        "source": "record",
+        "checked_at": "2026-10-03T19:12:26.465Z"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": 4,
+          "quote": "4+ years of professional software engineering experience",
+          "source": "record",
+          "basis": "first \"N years … experience\" phrase in the posting text (rule)"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 1,
+        "parts": [
+          "asks 4+ years vs my 1 (close)"
+        ],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-03",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [
+        {
+          "route": "CHECK-LIVENESS",
+          "reason": "no_apply_control"
+        }
+      ],
+      "next_action": {
+        "action": "CHECK-LIVENESS",
+        "why": "no_apply_control",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "L07-toast",
+      "company": "Toast",
+      "title": "Software Engineer II, Android (Remote, US)",
+      "url": "https://job-boards.greenhouse.io/toast/jobs/8224111",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "toast",
+        "candidates": [
+          "TOAST INC"
+        ],
+        "company_name": {
+          "value": "TOAST INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 150,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 97.4025974025974,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 150 approvals at 97.4025974025974% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "senior-only-on-list",
+        "source": "model-judgment",
+        "basis": "3 software title(s) in the top-titles list, 3 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Senior Software Engineer",
+          "Staff Software Engineer/Team Lead Manager",
+          "Staff Software Engineer - Payments Extensibility, Tech Lead"
+        ],
+        "titles_seen": [
+          "Senior Software Engineer",
+          "Senior Credit Risk Analyst",
+          "Staff Software Engineer/Team Lead Manager",
+          "Senior Systems Architect, Salesforce Engineering",
+          "Staff Software Engineer - Payments Extensibility, Tech Lead"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 177341,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 1.333,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "live",
+        "source": "record",
+        "checked_at": "2026-10-03T19:12:29.642Z"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": 3,
+          "quote": "3+ years of Android application development experience",
+          "source": "record",
+          "basis": "first \"N years … experience\" phrase in the posting text (rule)"
+        },
+        "role_type": {
+          "value": "off-target",
+          "matched": "android",
+          "source": "your-input",
+          "basis": "title contains \"android\" (off-target list: your-input)"
+        },
+        "title_level": {
+          "value": "mid",
+          "matched": "II",
+          "source": "your-input",
+          "basis": "posting title level \"II\" (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 2,
+        "parts": [
+          "asks 3+ years vs my 1 and title level \"II\" (close)",
+          "off-target role (android)"
+        ],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-03",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0.315,
+        "recommendation": "Apply",
+        "reason": "composite 0.315 ≥ 0.3, gates healthy",
+        "arithmetic": "(0.9·0.35) × 1 × 1 = 0.315"
+      },
+      "next_action": {
+        "action": "NETWORK",
+        "why": "scorer said Apply, but every sponsored software title on the list is senior — ask a contact whether new grads are sponsored before tailoring",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "L08-simplisafe",
+      "company": "SimpliSafe",
+      "title": "Software Engineer I - User Systems (Boston)",
+      "url": "https://job-boards.greenhouse.io/simplisafe/jobs/8095181",
+      "csv_match": {
+        "status": "no-csv-row",
+        "normalized_key": "simplisafe",
+        "candidates": []
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "live",
+        "source": "record",
+        "checked_at": "2026-10-03T19:12:31.818Z"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "quote": null,
+          "source": "record",
+          "basis": "no years phrase and no new-grad wording found: minimum not stated"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-03",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [
+        {
+          "route": "RESEARCH",
+          "reason": "no-csv-row"
+        }
+      ],
+      "next_action": {
+        "action": "RESEARCH",
+        "why": "no-csv-row",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "L09-vestmark-badid",
+      "company": "Vestmark",
+      "title": "Deliberately invalid job ID (expired-path test)",
+      "url": "https://job-boards.greenhouse.io/vestmark/jobs/1",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "vestmark",
+        "candidates": [
+          "VESTMARK INC"
+        ],
+        "company_name": {
+          "value": "VESTMARK INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 52,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 52 approvals at 100% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "1 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Software Engineer"
+        ],
+        "titles_seen": [
+          "Software Engineer",
+          "Senior QA Automation Engineer"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 117101,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.88,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 0,
+        "result": "expired",
+        "code": "expired_url",
+        "reason": "redirect to https://job-boards.greenhouse.io/vestmark?error=true",
+        "method": "live",
+        "source": "record",
+        "checked_at": "2026-10-03T19:12:33.976Z"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "quote": null,
+          "source": "record",
+          "basis": "no years phrase and no new-grad wording found: minimum not stated"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-03",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0,
+        "recommendation": "Skip",
+        "reason": "gated: liveness ≈ 0.000 (a closed gate zeroes the composite regardless of votes)",
+        "arithmetic": "(0.9·0.35) × 0 × 1 = 0.000"
+      },
+      "next_action": {
+        "action": "SKIP",
+        "why": "scorer recommended Skip",
+        "source": "model-judgment"
+      }
+    }
+  ]
+}
