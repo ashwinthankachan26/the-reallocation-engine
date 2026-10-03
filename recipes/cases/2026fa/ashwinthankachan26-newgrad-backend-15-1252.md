@@ -1,6 +1,6 @@
 ---
 status: DRAFT
-todos_open: 5
+todos_open: 6
 last_gate: null
 attestation: null
 recipe_version: 0.1.0
@@ -18,7 +18,7 @@ recipe_version: 0.1.0
 
 ## Lifecycle note
 
-The sample path runs end to end: one command, real repository data, the existing scorer, both outputs written, eleven offline tests passing. The recipe is still **DRAFT**: five typed TODO items are open (see *Proposed additions*), and the constitution's lifecycle table requires zero open TODOs before SPECIFIED, which comes before RUNNABLE-SAMPLE. Claiming more would claim a gate this recipe has not passed. The run evidence will be linked in `last_gate` once the run-log entry is committed.
+The sample path runs end to end: one command, real repository data, the existing scorer, both outputs written, eleven offline tests passing. The recipe is still **DRAFT**: six typed TODO items are open (see *Proposed additions*), and the constitution's lifecycle table requires zero open TODOs before SPECIFIED, which comes before RUNNABLE-SAMPLE. Claiming more would claim a gate this recipe has not passed. The run evidence will be linked in `last_gate` once the run-log entry is committed.
 
 ## Required reads
 
@@ -136,6 +136,8 @@ Timeline arithmetic: last unemployment day = EAD start + (ceiling − days used)
 - **Recent funding.** CSV funding dates end at 2025-09-26; the shipped Form D samples match 0 of 200 CSV companies by normalized name.
 - **Boston pay.** The salary check is national and company-wide.
 - **Whether a live page is honest.** The classifier reads the page; a posting left up after the role was filled can still look live.
+- **What the posting itself asks for.** The tool reads the company's sponsorship record, never the posting text. In the live run, 4 of the 5 TAILOR roles asked for 2–5+ years of experience; only the person reading the posting caught it.
+- **Whether the posting is the target role.** The person chooses which postings to feed in; an Android posting (Toast) passed through because the tool doesn't check role type.
 - **Every network request a live page makes.** The allowlist controls which page is opened. Redirect targets are named but not re-checked by code, and pages load their own scripts and assets.
 - **Titles the regex doesn't recognize as software.** "Full Stack Engineer" has no software/backend/developer word, so it is not counted (found on Lendbuzz's row, 2026-10-03).
 
@@ -163,6 +165,7 @@ Timeline arithmetic: last unemployment day = EAD start + (ceiling − days used)
 | 3 | A full per-title sponsorship list (DOL LCA disclosure: job title and SOC per filing) in place of the truncated top-titles list | Removes the main false-NETWORK risk (the Toast case) | `[TODO: DATA SOURCE]` |
 | 4 | Boston-adjusted wage via `scripts/bls/local-wage-adjustment.py`, once its `.venv` and `requirements.txt` ship | National medians overstate or understate local offers | `[TODO: DEV]` |
 | 5 | Fix the scorer's authorization regex so "work authorized (EAD)" still needs sponsorship | A maintained file outside the student namespace; a maintainer decision | `[TODO: APPROVE]` |
+| 6 | A posting-requirements gate: extract the stated years of experience (and role type) from the posting text the liveness check already loads, labeled `record`, and demote TAILOR when it exceeds the persona's level | The live run's biggest miss: 4 of 5 TAILOR roles asked for 2–5+ years | `[TODO: DEV]` |
 
 ## Output contract
 
@@ -190,7 +193,7 @@ Stop, and do not invent a value, when:
 
 | Result | Next action | Time block |
 |---|---|---|
-| Scorer Apply/Consider and a non-senior software title is listed | **TAILOR** — write the tailored application | the 2 research-and-apply hours |
+| Scorer Apply/Consider and a non-senior software title is listed | **TAILOR** — but first read the posting's experience line (proposed addition #6 would automate this); if it asks more than you have, quick-apply or network instead | the 2 research-and-apply hours |
 | Scorer Apply/Consider but every listed software title is senior | **NETWORK** — ask a contact or alum whether the team sponsors new graduates before tailoring | the 3 networking hours |
 | Scorer Skip (closed posting, impossible timeline, low composite) | **SKIP** — time returned | — |
 | No row, ambiguous row, no approvals, no software title | **RESEARCH** — check the company's own sponsorship statement or ask a recruiter | 15 minutes, human |

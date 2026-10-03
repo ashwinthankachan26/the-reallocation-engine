@@ -22,6 +22,7 @@ Answer, per job: *does this company's sponsorship record include people at my le
 - Which years the approvals come from.
 - Titles beyond the CSV's top few. *Toast: 150 approvals, listed software titles all Senior/Staff, yet the list can't say whether new grads were sponsored.*
 - Companies with no approval data (about 95% of rows): unknown, not "no".
+- **What the posting asks for**: experience years or role type. It reads sponsorship records, not the posting. *Live run: 4 of 5 TAILOR roles asked for 2–5+ years.* Read the posting before tailoring.
 - Résumé fit (not computed, so the composite maxes at 0.315), recent funding (data ends September 2025), and Boston pay (national medians only).
 
 ## Dependencies

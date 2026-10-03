@@ -68,7 +68,8 @@ The same split applies to every row. Only the matched row, its cells, and live l
 | Check | How | Result |
 |---|---|---|
 | Hand-check a value against the source | Python `csv.DictReader` on `ACQUIA INC` (sample run) | 18 / 0 / 100.0 / 165000.16 / Staff + Senior — all match the report |
-| Hand-check a live value | ⟨Ashwin: Toast row with the command in TEST-REPORT⟩ | ⟨result⟩ |
+| Hand-check a live value | Python `csv.DictReader` on `TOAST INC` (2026-10-03) | 150.0 / 97.4025974025974 / the same five titles in the same order — all match `triage-log.json` |
+| Posting requirements | Cohere and Formlabs read by me on the page; the rest extracted by Claude via the public Greenhouse/Lever APIs and reviewed by me | PathAI and SimpliSafe list no minimum; Vestmark 2–4 y, Cohere 2+, Lendbuzz 3+, Formlabs 4+, Klaviyo 5+ |
 | Offline tests | `node --test …/triage.test.mjs` | 11/11 pass |
 | Break A (my code) | made an unchecked posting count as live | 8 pass / 2 fail, the two predicted tests; restored |
 | Break B (the engine) | scorer with profile "F-1 STEM OPT — work authorized (EAD)" | `profile_needs_sponsorship: false`; Proven sponsor 0.4462 Apply → 0.1785 Skip |
@@ -76,22 +77,21 @@ The same split applies to every row. Only the matched row, its cells, and live l
 
 ## Reflection
 
-> ⟨DRAFT by Claude from the run record. Ashwin: rewrite in your own words; keep only what you agree with.⟩
-
 **What worked.** Every route showed up on real postings, and every "no" came with a reason. The tool's refusals were its most useful output: SimpliSafe came back as *missing from the data*, not as "doesn't sponsor", and Formlabs came back as *can't confirm it's open*, not as "open".
 
 **What it got wrong or missed.**
-- My prediction was wrong on **Formlabs**. I expected TAILOR. The page loaded but showed no Apply button the classifier recognized, so the tool held it back. That's correct fail-closed behavior, but it means the tool can under-report open roles on some careers sites.
+- **The biggest miss: the tool never reads the posting.** It said TAILOR for 5 roles, but when I read them, 4 asked for 2–5+ years of experience. Only PathAI is truly entry level. My final decisions were 1 tailor, 3 quick applies with a referral ask, and 3 network-first. The Toast posting was also Android, which isn't my stack, and the tool can't tell.
+- The pre-run prediction (TAILOR 6, written by Claude) was wrong on **Formlabs**. The page loaded but showed no Apply button the classifier recognized, so the tool held it back. I opened it myself: it's open, with an embedded application form and a "Submit application" button. The form is a Greenhouse embed (an iframe), which the repo's checker doesn't search. The tool was right to hold back, and the human gate caught what the code couldn't.
 - **Toast** confirms my CHANGE-BRIEF prediction 3 from the other direction: the tool can't tell "has sponsored senior engineers" from "won't sponsor new grads", because the title list is truncated.
 - The **14% skip rate** looks unhealthy only because I hand-picked relevant roles. The tool's filtering power on an unfiltered search is untested.
 - Smaller misses: the report prints unrounded rates (`97.46835443037976%`), and the software-title regex doesn't count "Full Stack Engineer".
 
-**One concrete next improvement.** Replace the truncated `top_job_titles_sponsored` list with per-filing job titles from the DOL LCA disclosure data (proposed addition #3). That's the one change that would turn Toast-type NETWORK results from guesses into records.
+**One concrete next improvement.** Add a posting-requirements gate (proposed addition #6): the liveness check already loads the posting's text, so extract its stated years of experience and role type as a `record` and demote TAILOR when they exceed my level. On this run that would have caught 4 of 5 wrong TAILORs. The second improvement is per-filing job titles from DOL LCA data (#3), which would turn the Toast-type NETWORK results from inferences into records.
 
 ## Attestation
 
 - Recipe: newgrad-backend-15-1252 v0.1.0
-- By: ⟨Ashwin S Thankachan — confirm each row below is what you saw, then sign⟩ · 2026-10-03
+- By: Ashwin S Thankachan · 2026-10-03
 
 ### Tested
 
@@ -104,10 +104,14 @@ The same split applies to every row. Only the matched row, its cells, and live l
 | **Break B:** scorer `--profile` "work authorized (EAD)" | `needs_sponsorship: false`; Proven 0.1785 Skip | sponsorship weight wrongly dropped (engine bug) |
 | live run, 9 real postings | TAILOR 5 · CHECK-LIVENESS 1 · NETWORK 1 · RESEARCH 1 · SKIP 1 | predicted TAILOR 6; Formlabs differed |
 | live invalid job ID | `expired_url` → Skip | expired gate closes |
-| clean checkout of the branch | ⟨from TEST-REPORT⟩ | same results as the working copy |
+| clean checkout of `11f0a43` (fresh clone, `npm install`) | doctor runnable · verify 172 files ✓ · tests 11/11 · sample routes identical · missing-EAD persona → exit 2, 0 files | same results as the working copy |
+| Toast hand-check against the CSV (`csv.DictReader`) | 150.0 / 97.4025974025974 / the same 5 titles in the same order | matches `runs/live/triage-log.json` |
+| opened the Formlabs posting by hand (gate G3) | open; job text left, embedded application form right, "Submit application" button | resolve the tool's `uncertain` by human judgment |
+| experience requirements: Cohere and Formlabs read by me; the others extracted by Claude from the posting API, reviewed by me | PathAI and SimpliSafe list no minimum; Vestmark 2–4 y, Cohere 2+, Lendbuzz 3+, Formlabs 4+, Klaviyo 5+ | the tool doesn't read this, so human judgment overrides TAILOR |
 
 ### Did not test
 
+- Automatic reading of posting requirements: done by hand only, for 7 postings.
 - An unfiltered search (only hand-picked roles), so the real skip rate and the real share of "unknown" companies are unmeasured.
 - `--live` on Workday, SmartRecruiters, or custom careers sites, beyond the four Greenhouse redirects.
 - Whether the classifier's "active" means the role is still being filled (an open-looking page can be a ghost posting).
