@@ -1,24 +1,26 @@
 ---
 status: DRAFT
-todos_open: 6
-last_gate: null
+todos_open: 8
+last_gate: "live-run 2026-10-03 (v0.1), G1 machine + G2–G5 signed by Ashwin S Thankachan, logs/runs/2026fa-ashwinthankachan26-1.md; v0.2 runs logged in logs/runs/2026fa-ashwinthankachan26-2.md"
 attestation: null
-recipe_version: 0.1.0
+recipe_version: 0.2.0
 ---
 
 # newgrad-backend-15-1252 — Does this sponsor hire at my level?
 
 ## Executive summary
 
-**What this is.** A step-by-step procedure, plus a small tool that runs it, for an international master's student graduating in December 2026 on an F-1 visa who wants a new-graduate backend software job and will need visa sponsorship later. For each job they are considering, it checks public H-1B records and answers a question a job posting does not: *does this company sponsor people at a new-graduate level, or only senior engineers?* It also checks that the posting is still open and that hiring could finish before the student's post-graduation work window runs out.
+**What this is.** A step-by-step procedure, plus a small tool that runs it, for an international master's student graduating in December 2026 on an F-1 visa who wants a new-graduate backend software job and will need visa sponsorship later. For each job they are considering, it checks public H-1B records and answers a question a job posting does not: *does this company sponsor people at a new-graduate level, or only senior engineers?* It also checks that the posting is still open and that hiring could finish before the student's post-graduation work window runs out. Version 0.2 also reads **what each posting asks for** (years of experience, seniority in the title, role type) and compares it with the student's own level.
 
 **Why read it.** About a third of the companies in the engine's dataset that sponsored software roles list only senior, staff, lead, or principal titles. "This company sponsors" is not the same as "this company sponsors someone like me." Without this check, a new graduate spends hours tailoring applications to companies whose sponsorship history is all senior-level.
 
-**What it decides.** Nothing on its own. Each job gets a recommended next step — *tailor an application*, *network first*, *skip*, *research by hand*, or *check the posting first* — with every number labeled as a record, a judgment, or the student's own input. The student makes the call at every gate.
+**What it found.** On 80 open software postings at nine Boston-area sponsors, only 9 were worth application time (2 to tailor, 7 for a quick application); 57 were too senior and belong in networking, and 14 were at a company with no sponsorship data.
+
+**What it decides.** Nothing on its own. Each job gets a recommended next step — *tailor an application*, *quick-apply with a referral ask*, *network first*, *skip*, *research by hand*, or *check the posting first* — with every number labeled as a record, a judgment, or the student's own input. The student makes the call at every gate.
 
 ## Lifecycle note
 
-The sample path runs end to end: one command, real repository data, the existing scorer, both outputs written, eleven offline tests passing. The recipe is still **DRAFT**: six typed TODO items are open (see *Proposed additions*), and the constitution's lifecycle table requires zero open TODOs before SPECIFIED, which comes before RUNNABLE-SAMPLE. Claiming more would claim a gate this recipe has not passed. The run evidence will be linked in `last_gate` once the run-log entry is committed.
+The sample path, a live run on 9 real postings, and an 80-posting sweep all run end to end: one command each, real repository data, the existing scorer, both outputs written, sixteen offline tests passing. Proposed addition #6 from v0.1 was built in v0.2 and is closed. The recipe is still **DRAFT**: eight typed TODO items are open (see *Proposed additions*), and the constitution's lifecycle table requires zero open TODOs before SPECIFIED, which comes before RUNNABLE-SAMPLE. Claiming more would claim a gate this recipe has not passed.
 
 ## Required reads
 
@@ -41,13 +43,28 @@ The sample path runs end to end: one command, real repository data, the existing
 | Network hosts (live only) | `job-boards.greenhouse.io`, `boards.greenhouse.io`, `jobs.lever.co`, `jobs.ashbyhq.com`, and the careers sites Greenhouse redirected to on 2026-10-03: `www.pathai.com`, `www.klaviyo.com`, `careers.toasttab.com`, `careers.formlabs.com` | the only hosts a live run may open; anything else is `host-not-allowed` and never opened |
 | Scorer | `scripts/score/role-scorer.mjs` | run as a CLI (it has no exports) with `--out-dir`, **without** `--profile` |
 | Prototype | `scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs` | this recipe's runner |
+| Sweep (v0.2) | `scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs` | the only other network step: one GET per board to `boards-api.greenhouse.io` (named in `config.json` → `sweep.host`); saves postings as snapshots with emails and phone numbers redacted, so triage runs on them offline |
+| Person's decisions (v0.2) | `course/2026fa/submissions/ashwinthankachan26/runs/live/human-decisions.json`, `…/runs/sweep/human-decisions-oos.json` | `--human`: the tool reports agreement with decisions the person made by hand |
 | Assumptions | `scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/config.json` | every value `your-input` |
-| Persona | `…/fixtures/persona.newgrad.json` | fictional, `@example.com`, mirrors the author's dates |
+| Persona | `…/fixtures/persona.newgrad.json` | fictional identity, `@example.com`; the author's real dates, 1 year of experience, STEM-eligible MS |
 
 The one command (sample mode, offline):
 
 ```bash
 node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/sample
+```
+
+Live run on real postings, compared with the person's own decisions (v0.2):
+
+```bash
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/live/roles.live.json --live --today 2026-10-03 --human course/2026fa/submissions/ashwinthankachan26/runs/live/human-decisions.json --out-dir course/2026fa/submissions/ashwinthankachan26/runs/live-v0.2
+```
+
+Unfiltered sweep (v0.2): fetch once, then triage offline:
+
+```bash
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/sweep/roles.sweep.json --today 2026-10-03 --human course/2026fa/submissions/ashwinthankachan26/runs/sweep/human-decisions-oos.json --out-dir course/2026fa/submissions/ashwinthankachan26/runs/sweep/triage
 ```
 
 Tests (offline; fictional fixture companies; the real scorer):
@@ -60,9 +77,9 @@ node --test scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/tr
 
 **Roles file** (`--roles`): a JSON list, or `{ "roles": [...] }`, of `{ role_id (unique), company, title, url, liveness_snapshot?, apply_date? }`. `liveness_snapshot` is a saved page in `classifyLiveness()` input shape, `{ status, finalUrl, bodyText, applyControls }`, used in sample mode. `apply_date` defaults to `--today`.
 
-**Persona** (`--persona`): `visa.ead_start_date` (YYYY-MM-DD), `visa.unemployment_ceiling` (90 for post-completion OPT), `visa.unemployment_days_used`. A missing field stops the run; it is never defaulted.
+**Persona** (`--persona`): `visa.ead_start_date` (YYYY-MM-DD), `visa.unemployment_ceiling` (90 for post-completion OPT; it applies in year 1 even with the STEM extension), `visa.unemployment_days_used`, and (v0.2) `target_role.experience_years` (the author: 1, meaning 1 year full-time plus a 4-month co-op, rounded down; a master's isn't counted as years). A missing field stops the run; it is never defaulted.
 
-**Config** (`config.json`) — all `your-input`, decided by the author on 2026-10-02:
+**Config** (`config.json`) — all `your-input`, decided by the author on 2026-10-02 (v0.1) and 2026-10-03 (v0.2 keys):
 
 | Key | Value | Reason |
 |---|---|---|
@@ -73,6 +90,10 @@ node --test scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/tr
 | `timeline.buffer_days` | 30 | a month of margin before the unemployment limit counts as fully safe |
 | `target_soc` | 15-1252 | BLS Software Developers |
 | `live_hosts` | the hosts listed in the source inventory | names every host a live run may open (assignment rule: no unnamed hosts) |
+| `requirements.close_gap_years` | 3 | the author's own G5 rule from the live run: a posting asking up to 3 years more than mine, or a "II" title, is *close* (quick apply); more is *far* (network) |
+| `requirements.off_target_title_terms` | android, ios, mobile, embedded, firmware, frontend, front-end, hardware, sdet, designer | roles outside a backend stack (the Toast Android case) |
+| `timeline.lag_scenarios` | 30, 45, 60 | sensitivity only; 45 still feeds the score |
+| `sweep.boards` / `sweep.filter` | 9 Greenhouse boards; software titles in US locations; interns, designers, PMs, recruiters and sales excluded; **seniority not pre-filtered** | an unfiltered test set, so the tool's own rule does the filtering |
 
 ## Phase gates
 
@@ -84,7 +105,7 @@ Run variables used below: `OUT=course/2026fa/submissions/ashwinthankachan26/runs
 | **G2 Sponsorship evidence** | human | every role sent to the scorer has `csv_match.status == "found"` and `sponsorship.status == "scored"` (command below) | for each scored role: the posting's company vs the matched CSV `company_name` and `state`. A wrong match is rejected by moving the role to RESEARCH. |
 | **G3 Liveness** | **gate (multiplier)** | every entry in `$OUT/roles.for-scorer.json` has a numeric `liveness.factor` (1 or 0); `uncertain` / not checked never reach the scorer | the URL, result code, and reason for every TAILOR / NETWORK row. In sample mode the source is `your-input` (a snapshot), so the posting must be checked live before acting. |
 | **G4 Timeline** | **gate (multiplier)** | every role has `timeline.factor` in [0, 1] and `timeline.slack_days` | the EAD start date, last unemployment day, hiring lag, and slack. The student confirms the dates are still their best estimate. |
-| **G5 Decision** | human | `$OUT/triage-report.md` exists and opens with `## Executive summary` | the report. The student writes their own tailor / network / skip choice per row in the run-log entry; the tool never applies or sends anything. |
+| **G5 Decision** | human | `$OUT/triage-report.md` exists and opens with `## Executive summary` | the report, including the **quoted experience line** from each posting (v0.2), which the person checks against the posting. The student writes their own tailor / quick-apply / network / skip choice per row in the run-log entry; with `--human`, the report shows where the tool and the person disagree. The tool never applies or sends anything. |
 
 Gate commands:
 
@@ -112,10 +133,12 @@ head -3 "$OUT/triage-report.md"
 | 6 | Liveness via `classifyLiveness()` on the snapshot or the live page; `uncertain` / not checked → CHECK-LIVENESS | agent |
 | 7 | Timeline factor from persona dates, hiring lag, and buffer | agent |
 | 8 | Write `roles.for-scorer.json` (sponsorship, liveness, timeline; **no** fit) and run the existing scorer | agent |
-| 9 | Map the scorer's recommendation plus level fit to a next action | agent (rule) |
-| 10 | Clear G2–G5 and record the decisions | human |
+| 9 | (v0.2) Read the posting text already loaded (live page, snapshot, or board API): first "N years … experience" phrase, the title's level word (Senior/Staff/Lead/… = far, II = close, III+ = far), and role type; count mismatches against the persona | agent (rule on a record) |
+| 10 | Map the scorer's recommendation + level fit + mismatches to a next action: 0 → TAILOR, 1 → QUICK-APPLY, 2+ → NETWORK; senior-only sponsor list → NETWORK; Skip → SKIP | agent (rule) |
+| 11 | Report the 30/45/60-day lag table and the apply-by dates | agent |
+| 12 | Clear G2–G5 and record the decisions; optionally compare with `--human` | human |
 
-Timeline arithmetic: last unemployment day = EAD start + (ceiling − days used) − 1; earliest start = later of EAD start and apply date + hiring lag; slack = last day − earliest start; factor = 1 if slack ≥ buffer, slack ÷ buffer if 0 ≤ slack < buffer, 0 if slack < 0. For the author's plan (EAD 2027-02-01, 90 days, none used): last day 2027-05-01. Applying today lands on the EAD date with 89 days of slack (factor 1); applying on 2027-04-10 gives slack −24 (factor 0).
+Timeline arithmetic: last unemployment day = EAD start + (ceiling − days used) − 1; earliest start = later of EAD start and apply date + hiring lag; slack = last day − earliest start; factor = 1 if slack ≥ buffer, slack ÷ buffer if 0 ≤ slack < buffer, 0 if slack < 0. For the author's plan (EAD 2027-02-01, 90 days, none used): last day 2027-05-01. Applying today lands on the EAD date with 89 days of slack (factor 1); applying on 2027-04-10 gives slack −24 (factor 0). To keep the full 30-day buffer, apply by 2027-03-02 (30-day lag), 2027-02-15 (45), or 2027-01-31 (60).
 
 ## What it can verify
 
@@ -125,6 +148,8 @@ Timeline arithmetic: last unemployment day = EAD start + (ceiling − days used)
 - What the repository's liveness classifier concludes about a page: live in `--live` mode (`record`), from a saved snapshot otherwise (`your-input`).
 - The timeline arithmetic, given the student's dates and assumptions.
 - That the scorer received only roles with complete evidence and an explicit liveness factor (tested).
+- (v0.2) The posting's own experience sentence, quoted exactly (`record` when read live or from the board API). Correct on every live posting that states years (Vestmark 2–4, Cohere 2+, Lendbuzz 3+, Formlabs 4+, Klaviyo 5+, Toast 3+).
+- (v0.2) How often the tool agrees with the person's own decisions: **7 of 8** on the live run (in-sample: the rule was written from those decisions) and **3 of 6** on postings it had never seen (out-of-sample).
 
 ## What it cannot verify
 
@@ -136,8 +161,10 @@ Timeline arithmetic: last unemployment day = EAD start + (ceiling − days used)
 - **Recent funding.** CSV funding dates end at 2025-09-26; the shipped Form D samples match 0 of 200 CSV companies by normalized name.
 - **Boston pay.** The salary check is national and company-wide.
 - **Whether a live page is honest.** The classifier reads the page; a posting left up after the role was filled can still look live.
-- **What the posting itself asks for.** The tool reads the company's sponsorship record, never the posting text. In the live run, 4 of the 5 TAILOR roles asked for 2–5+ years of experience; only the person reading the posting caught it.
-- **Whether the posting is the target role.** The person chooses which postings to feed in; an Android posting (Toast) passed through because the tool doesn't check role type.
+- **Every way a posting states experience.** v0.2 needs the word "experience" near the number. "12+ years in the software development lifecycle" (Cohere, Staff) was missed; only the title's "Staff" caught it. "BS + 3 years or MS + 1 year" equivalences aren't read. (v0.1 read no posting text at all; in the v0.1 live run, 4 of 5 TAILOR roles asked for 2–5+ years.)
+- **The difference between "far" and "way too far".** The person skips roles 8–12+ years above them; the tool sends every far role to NETWORK (2 of the 3 out-of-sample disagreements).
+- **Role type beyond a title word list.** "Off-target" is a list of title words (Android, embedded, …). A backend posting with an unusual title, or a mobile role without those words, isn't caught.
+- **E-Verify enrollment.** The STEM OPT extension needs an E-Verify employer; nothing in the repo shows which companies are enrolled.
 - **Every network request a live page makes.** The allowlist controls which page is opened. Redirect targets are named but not re-checked by code, and pages load their own scripts and assets.
 - **Titles the regex doesn't recognize as software.** "Full Stack Engineer" has no software/backend/developer word, so it is not counted (found on Lendbuzz's row, 2026-10-03).
 
@@ -165,15 +192,18 @@ Timeline arithmetic: last unemployment day = EAD start + (ceiling − days used)
 | 3 | A full per-title sponsorship list (DOL LCA disclosure: job title and SOC per filing) in place of the truncated top-titles list | Removes the main false-NETWORK risk (the Toast case) | `[TODO: DATA SOURCE]` |
 | 4 | Boston-adjusted wage via `scripts/bls/local-wage-adjustment.py`, once its `.venv` and `requirements.txt` ship | National medians overstate or understate local offers | `[TODO: DEV]` |
 | 5 | Fix the scorer's authorization regex so "work authorized (EAD)" still needs sponsorship | A maintained file outside the student namespace; a maintainer decision | `[TODO: APPROVE]` |
-| 6 | A posting-requirements gate: extract the stated years of experience (and role type) from the posting text the liveness check already loads, labeled `record`, and demote TAILOR when it exceeds the persona's level | The live run's biggest miss: 4 of 5 TAILOR roles asked for 2–5+ years | `[TODO: DEV]` |
+| 6 | ~~A posting-requirements gate~~ **built in v0.2** (`postingRequirements`, `titleLevel`, `mismatchCount` in `lib.mjs`; 5 tests). Closed: script exists, conformance passes, live + sweep runs logged | The v0.1 live run's biggest miss | closed |
+| 7 | A "too far → SKIP" tier for postings far above the persona's level (the out-of-sample check: I skipped 12+ and 8+ year roles the tool sent to NETWORK). The threshold is a human decision; it must be set before seeing results, not tuned to these 6 | 2 of 3 out-of-sample disagreements | `[TODO: DEV]` |
+| 8 | Broaden the years reader: "N+ years in/with …" without the word "experience", and "or MS + N years" equivalences | the missed Cohere "12+ years in the SDLC" | `[TODO: DEV]` |
+| 9 | An E-Verify enrollment source for the STEM OPT extension (e.g. the public E-Verify employer search, downloaded and verified first) | a STEM-eligible student can't use the extension at a non-E-Verify employer | `[TODO: DATA SOURCE]` |
 
 ## Output contract
 
 Both files are written to `--out-dir` (default `course/2026fa/submissions/ashwinthankachan26/runs/<date>/`). Writing under `data/` is refused.
 
-**For the agent — `triage-log.json`:** `_recipe`, `recipe_version`, `run_date`, `mode`, `inputs` (paths), `assumptions` (all `your-input`), `scorer_stdout`, `counts` per action, `gaps`, `gates` (G1–G5 with status), and `roles[]`. Each role has `csv_match`, `sponsorship` (each value `{ value, source, field | basis }`), `level_fit`, `salary`, `liveness`, `timeline`, `blockers`, `scorer` (composite, recommendation, reason, arithmetic) when scored, and `next_action { action, why, source }`.
+**For the agent — `triage-log.json`:** `_recipe`, `recipe_version`, `run_date`, `mode`, `inputs` (paths), `assumptions` (all `your-input`), `scorer_stdout`, `counts` per action, `gaps`, `gates` (G1–G5 with status), (v0.2) `apply_by`, `human_agreement`, and `roles[]`. Each role has `csv_match`, `sponsorship` (each value `{ value, source, field | basis }`), `level_fit`, `salary`, `liveness`, `timeline`, (v0.2) `lag_sensitivity`, `posting_requirements` (`years { value, quote, source }`, `role_type`, `title_level`), `mismatch { value, parts }`, `blockers`, `scorer` (composite, recommendation, reason, arithmetic) when scored, and `next_action { action, why, source }`.
 
-**For the person — `triage-report.md`:** Executive summary → Results table (next action, why, sponsorship, level fit, liveness, timeline, composite) → Verified vs inferred → Salary sanity check → Gates for you to clear (checkboxes) → What this run cannot tell you → Run record.
+**For the person — `triage-report.md`:** Executive summary → Results table (next action, why, sponsorship, level fit, **posting asks**, liveness, timeline, composite) → (v0.2) Does the tool agree with my own decisions? → Hiring-lag sensitivity → Verified vs inferred → Salary sanity check → Gates for you to clear (checkboxes) → What this run cannot tell you → Run record.
 
 Also kept for audit: `roles.for-scorer.json`, plus the scorer's own `role-scores.json` and `role-scores.md`, unchanged.
 
@@ -193,7 +223,9 @@ Stop, and do not invent a value, when:
 
 | Result | Next action | Time block |
 |---|---|---|
-| Scorer Apply/Consider and a non-senior software title is listed | **TAILOR** — but first read the posting's experience line (proposed addition #6 would automate this); if it asks more than you have, quick-apply or network instead | the 2 research-and-apply hours |
+| Scorer Apply/Consider, non-senior titles on the sponsor list, posting asks nothing above my level | **TAILOR**: write the tailored application (check the quoted experience line first) | the 2 research-and-apply hours |
+| Same, but one mismatch (asks ≤ 3 years more than mine, a "II" title, or an off-target role) | **QUICK-APPLY**: send the template résumé and ask a contact for a referral; don't spend tailoring hours | ~15 min of the 2 hours, plus a networking message |
+| Same, but the posting is far (asks 4+ years more, a Senior/Staff/Lead title, or two mismatches) | **NETWORK**: ask about junior roles at the company instead | the 3 networking hours |
 | Scorer Apply/Consider but every listed software title is senior | **NETWORK** — ask a contact or alum whether the team sponsors new graduates before tailoring | the 3 networking hours |
 | Scorer Skip (closed posting, impossible timeline, low composite) | **SKIP** — time returned | — |
 | No row, ambiguous row, no approvals, no software title | **RESEARCH** — check the company's own sponsorship statement or ask a recruiter | 15 minutes, human |
@@ -201,7 +233,8 @@ Stop, and do not invent a value, when:
 
 ## Verification checks
 
-- Offline tests: `node --test scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.test.mjs` — every route, the real scorer, a refused bad input.
+- Offline tests: `node --test scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.test.mjs` — 16 tests: every route, the real scorer, a refused bad input; v0.2 adds requirement phrases copied from the live postings, the mismatch rule, the title-level fix, lag sensitivity, and sweep redaction.
+- Out-of-sample (v0.2): 6 sweep postings drawn by seed, judged by the person before seeing the tool's answer, compared with `--human`. Report the number; don't change the rule to fit it.
 - Conformance: `node scripts/conformance.mjs recipes/cases/2026fa scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252`.
 - Hand-check one row against the CSV with a quote-aware reader (`python3` `csv.DictReader`). `cut -d,` splits inside the quoted titles field and drops columns.
 - **Break A:** change `livenessGate(null)` to return `cleared: true, factor: 1`. Expected: the liveness unit test and the end-to-end test fail. Then `git restore` the file.
@@ -216,9 +249,9 @@ Stop, and do not invent a value, when:
 Run-log template (extends `recipes/_shared.md` §Logging Rules):
 
 ```markdown
-## YYYY-MM-DD — newgrad-backend-15-1252 <sample | live> run
+## YYYY-MM-DD — newgrad-backend-15-1252 <sample | live | sweep> run
 
-- **Recipe:** recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md v0.1.0
+- **Recipe:** recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md v<version>
 - **Commit:** <short sha>
 - **Command:** <exact command>
 - **Inputs:** <roles file> · <persona> · config.json · <CSV> · <BLS>

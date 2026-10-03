@@ -1,8 +1,10 @@
-# Worked run — new-grad backend sponsor-level triage, live, 2026-10-03
+# Worked run — new-grad backend sponsor-level triage (v0.1 live run, v0.2 posting requirements + 80-posting sweep), 2026-10-03
 
 ## Executive summary
 
 I ran the triage tool on nine real job postings at Boston-area companies, checked live on 2026-10-03. It recommended tailoring five applications. It sent one (Toast) to networking first, because Toast's sponsorship record lists only senior software titles. It flagged one company (SimpliSafe) as missing from the sponsorship data instead of calling it a non-sponsor. It refused to call one page (Formlabs) open when it couldn't see an Apply button, and it skipped a deliberately broken link. I checked values against the source data by hand and deliberately broke the tool twice. The main lesson: the tool's most useful output is what it *won't* claim.
+
+Reading the postings myself showed the biggest gap: 4 of the 5 "tailor" jobs asked for 2–5+ years. So version 0.2 reads each posting's requirements too. On the same nine jobs it now matches my own decisions on 7 of 8. On 80 postings it had never seen, it found only 9 worth application time. On 6 of those I judged before seeing its answer, it agreed with me on 3. That gap is the honest measure of what's left to fix.
 
 ## Inputs
 
@@ -75,6 +77,62 @@ The same split applies to every row. Only the matched row, its cells, and live l
 | Break B (the engine) | scorer with profile "F-1 STEM OPT — work authorized (EAD)" | `profile_needs_sponsorship: false`; Proven sponsor 0.4462 Apply → 0.1785 Skip |
 | Live expired path | invalid Greenhouse job ID | redirect to `?error=true` → `expired_url` → Skip |
 
+## v0.2 — reading the posting, and a test on 80 unseen postings
+
+**What changed:** the tool now reads each posting's text (the page the live check already has open, or the job-board API copy). It takes the first "N years … experience" sentence and the title's level word (Senior/Staff/Lead → far; II → close), checks the role type (Android, embedded, … → off-target), and applies my own G5 rule: 0 mismatches → TAILOR, 1 → QUICK-APPLY, 2+ → NETWORK. My experience is set to 1 year (1 year full-time + a 4-month co-op, rounded down).
+
+### Same 9 jobs, compared with my hand decisions
+
+```text
+✓ triaged 9 roles → TAILOR 1 · QUICK-APPLY 3 · NETWORK 2 · CHECK-LIVENESS 1 · RESEARCH 1 · SKIP 1
+  scorer: ✓ scored 7 roles → Apply 6 · Consider 0 · Skip 1 (skip 14%)
+```
+
+Excerpt from `runs/live-v0.2/triage-report.md` (three of its nine columns, location suffixes trimmed from titles; the quotes are verbatim):
+
+| Role | Next action | Posting asks |
+|---|---|---|
+| PathAI — Software Engineer I, Fullstack | **TAILOR** | no minimum stated [record] |
+| Vestmark — Software Engineer | **QUICK-APPLY** | "2-4 years of professional software engineering experience" → 2 [record] |
+| Lendbuzz — Full-Stack Engineer (Backend) | **QUICK-APPLY** | "3+ years of backend development experience" → 3 [record] |
+| Klaviyo — Full Stack Software Engineer - People Systems | **NETWORK** | "5+ years of engineering or data engineering experience" → 5 [record] |
+| Toast — Software Engineer II, Android | **NETWORK** | "3+ years of Android application development experience" → 3 [record] · off-target: android |
+
+**Agreement with my decisions: 7 of 8** (from the report). The miss is Formlabs: I decided NETWORK, and the tool still says CHECK-LIVENESS because its page check is unsure. This is **in-sample**: the rule was written *from* these decisions, so it shows the rule encodes my judgment, not that it generalizes.
+
+### 80 postings it had never seen (the sweep)
+
+```text
+✓ swept 9 boards → 80 software postings (US) saved
+✓ triaged 80 roles → NETWORK 57 · QUICK-APPLY 7 · TAILOR 2 · RESEARCH 14
+```
+
+Only **9 of 80** open software postings at these sponsors are worth application time for me. 57 are too senior (network), and 14 are at SimpliSafe, which has no sponsorship data (research).
+
+**Out-of-sample check.** Six postings drawn by seed. I decided each from the posting *before* seeing the tool's answer. From `runs/sweep/triage/triage-report.md`:
+
+| Role | My decision | Tool | Match |
+|---|---|---|---|
+| S-klaviyo-7597868003 | NETWORK | NETWORK | ✓ |
+| S-klaviyo-7855793003 | TAILOR | QUICK-APPLY | ✗ |
+| S-coherehealth-7870427003 | SKIP | NETWORK | ✗ |
+| S-toast-8233154 | NETWORK | NETWORK | ✓ |
+| S-formlabs-7909577 | QUICK-APPLY | QUICK-APPLY | ✓ |
+| S-simplisafe-7982252 | SKIP | RESEARCH | ✗ |
+
+**3 of 6.** I did not change the rule after seeing this.
+
+### Verified vs. inferred for the new fields (Lendbuzz)
+
+| Value | Label | Why |
+|---|---|---|
+| "3+ years of backend development experience" | record | the posting's own sentence, read from the live page |
+| years = 3 | model-judgment | a regex took the first number from that sentence |
+| title level = entry-or-unstated | model-judgment | no level word in "Full-Stack Engineer (Backend)" |
+| my experience = 1 | your-input | persona |
+| mismatch = 1 ("asks 3+ years vs my 1, close") | model-judgment | my rule; close = up to 3 years more (your-input) |
+| QUICK-APPLY | model-judgment | 1 mismatch → quick apply |
+
 ## Reflection
 
 **What worked.** Every route showed up on real postings, and every "no" came with a reason. The tool's refusals were its most useful output: SimpliSafe came back as *missing from the data*, not as "doesn't sponsor", and Formlabs came back as *can't confirm it's open*, not as "open".
@@ -83,12 +141,15 @@ The same split applies to every row. Only the matched row, its cells, and live l
 - **The biggest miss: the tool never reads the posting.** It said TAILOR for 5 roles, but when I read them, 4 asked for 2–5+ years of experience. Only PathAI is truly entry level. My final decisions were 1 tailor, 3 quick applies with a referral ask, and 3 network-first. The Toast posting was also Android, which isn't my stack, and the tool can't tell.
 - The pre-run prediction (TAILOR 6, written by Claude) was wrong on **Formlabs**. The page loaded but showed no Apply button the classifier recognized, so the tool held it back. I opened it myself: it's open, with an embedded application form and a "Submit application" button. The form is a Greenhouse embed (an iframe), which the repo's checker doesn't search. The tool was right to hold back, and the human gate caught what the code couldn't.
 - **Toast** confirms my CHANGE-BRIEF prediction 3 from the other direction: the tool can't tell "has sponsored senior engineers" from "won't sponsor new grads", because the title list is truncated.
-- The **14% skip rate** looks unhealthy only because I hand-picked relevant roles. The tool's filtering power on an unfiltered search is untested.
+- The **14% skip rate** looked unhealthy because I hand-picked relevant roles. The v0.2 sweep answers it: on 80 unfiltered postings only 9 deserve application time.
+- **v0.2, in-sample looked perfect, out-of-sample didn't.** Before the official sweep, a dry run showed Senior/Staff/Lead postings with no "years" sentence going to TAILOR. The years rule never looked at the title. That was fixed before the official run. Then, on 6 postings judged blind, the tool matched me only 3 times. It has no "way too far, skip" result (I skipped 12+ and 8+ year roles it sent to NETWORK), it missed "12+ years **in** the SDLC" because that sentence has no word "experience", and it was stricter than me on a 2+ year role I'd stretch for.
 - Smaller misses: the report prints unrounded rates (`97.46835443037976%`), and the software-title regex doesn't count "Full Stack Engineer".
 
-**One concrete next improvement.** Add a posting-requirements gate (proposed addition #6): the liveness check already loads the posting's text, so extract its stated years of experience and role type as a `record` and demote TAILOR when they exceed my level. On this run that would have caught 4 of 5 wrong TAILORs. The second improvement is per-filing job titles from DOL LCA data (#3), which would turn the Toast-type NETWORK results from inferences into records.
+**One concrete next improvement.** v0.1's next step (reading the posting, #6) is now built. The next one is a "too far → SKIP" tier (#7), with the threshold set *before* looking at results, and not tuned to these 6 postings, plus a years reader that doesn't need the word "experience" (#8). After that, per-filing job titles from DOL LCA data (#3) would turn the Toast-type NETWORK results from inferences into records.
 
-## Attestation
+## Attestation — v0.1
+
+> Kept as the record of v0.1. Under SNICKERDOODLE ("any edit to the recipe or its scripts after attestation voids it"), it doesn't cover v0.2; see the v0.2 attestation below.
 
 - Recipe: newgrad-backend-15-1252 v0.1.0
 - By: Ashwin S Thankachan · 2026-10-03
@@ -127,3 +188,35 @@ The same split applies to every row. Only the matched row, its cells, and live l
 - Recipe body had 8 `[TODO` markers vs `todos_open: 5` → reworded 3 back-references.
 - First hand-check command (`cut -d,`) dropped the approvals column → re-ran with `csv.DictReader`.
 - Live mode could open any host → added the `live_hosts` allowlist and a test.
+
+## Attestation — v0.2
+
+- Recipe: newgrad-backend-15-1252 v0.2.0
+- By: ⟨Ashwin S Thankachan — confirm each row, then sign⟩ · 2026-10-03
+
+### Tested
+
+| Ran | Saw | Expected |
+|---|---|---|
+| `node --test …/triage.test.mjs` (Claude, after each change) | 16/16 pass | all pass, offline |
+| live v0.2 + `--human` (me at 14:54; re-run by Claude at 15:12 after the persona fix) | TAILOR 1 · QUICK-APPLY 3 · NETWORK 2 · CHECK-LIVENESS 1 · RESEARCH 1 · SKIP 1; agreement 7/8 | the posting requirements reproduce my G5 decisions |
+| years quotes in `runs/live-v0.2/triage-report.md` vs the postings I read | Vestmark 2–4, Cohere 2+, Lendbuzz 3+, Formlabs 4+, Klaviyo 5+, Toast 3+ (Android) all quoted correctly | matches what I saw on the pages |
+| sweep (me, 14:54) | 80 postings from 9 boards saved | every open US software posting, contacts redacted |
+| sweep triage (me: persona 0; re-run by Claude: persona 1) | NETWORK 59/57 · TAILOR 2/2 · QUICK-APPLY 5/7 · RESEARCH 14/14 | most postings too senior for me |
+| **out-of-sample:** 6 postings judged blind by me | 3/6 agree | an honest measure, below the in-sample 7/8 |
+| **break found by testing:** private sweep dry run (Claude) | Senior/Staff/Lead postings with no years sentence → TAILOR; a designer role in the sweep | fixed with the title-level rule and sweep exclusions; 2 new tests |
+
+### Did not test
+
+- A "way too far → SKIP" tier (not built; proposed addition #7).
+- Experience phrased without the word "experience", or "or MS + N years" (proposed addition #8).
+- Boards other than these 9 Greenhouse boards; Lever/Ashby boards in the sweep.
+- Whether my 1-year experience count matches how each employer counts co-ops.
+- E-Verify enrollment for the STEM extension (no data source).
+
+### Broke during testing, fixed
+
+- Senior/Staff/Lead postings with no years sentence went to TAILOR → added `titleLevel()` (stricter of years and title).
+- "Software Product Designer" passed the sweep's "software" filter → excluded designer/PM/recruiter/sales titles, and added "designer" to the off-target list.
+- First sweep test fixture had a non-555 phone number and a non-example.com email (would have tripped pii-scan) → replaced before commit.
+

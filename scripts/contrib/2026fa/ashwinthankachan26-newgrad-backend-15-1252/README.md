@@ -12,7 +12,7 @@ promoted_to: null
 
 **What this is.** A small command-line tool for an international new graduate looking for backend software jobs. It checks each job against public H-1B sponsorship records and asks a question the usual "does this company sponsor?" check skips: *does it sponsor people at my level, or only senior engineers?*
 
-**Why use it.** About a third of the companies in the engine's dataset with sponsored software titles list only senior ones. Tailoring an application for those costs hours and rarely pays off for a new graduate. The tool sends each job to one of five piles — **tailor**, **network first**, **skip**, **research by hand**, or **check the posting first** — and shows the evidence and its source for every pile.
+**Why use it.** About a third of the companies in the engine's dataset with sponsored software titles list only senior ones, and most postings at the rest ask for more experience than a new graduate has. Version 0.2 reads each posting's own requirements too. On 80 real postings at nine sponsors it found only 9 worth application time. The tool sends each job to one of six piles: **tailor**, **quick-apply**, **network first**, **skip**, **research by hand**, or **check the posting first**. It shows the evidence and its source for every pile.
 
 **What it decides.** Nothing. It recommends; you decide.
 
@@ -32,6 +32,13 @@ node --test scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/tr
 
 Name the test **file**: `node --test <folder>` fails on Node 22+.
 
+Sweep (v0.2): fetch every open software posting on the boards in `config.json` → `sweep` (one host, `boards-api.greenhouse.io`; emails and phones redacted before saving), then triage the saved postings offline:
+
+```bash
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/sweep/triage
+```
+
 Live run on your own role list. It opens each URL with the repo's Playwright checker, one at a time, and only if the URL's host is in `config.json` → `live_hosts` (`job-boards.greenhouse.io`, `boards.greenhouse.io`, `jobs.lever.co`, `jobs.ashbyhq.com`, and the careers sites Greenhouse redirected to on 2026-10-03: `www.pathai.com`, `www.klaviyo.com`, `careers.toasttab.com`, `careers.formlabs.com`):
 
 ```bash
@@ -49,6 +56,7 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mj
 | `--out-dir` | `course/2026fa/submissions/ashwinthankachan26/runs/<today>` | where every output goes; writing under `data/` is refused |
 | `--csv`, `--bls` | the shipped repo files | override data paths (tests use fixtures) |
 | `--live` | off | check URLs live instead of reading snapshots |
+| `--human` | none | a JSON of your own decisions (`{ "decisions": { role_id: ACTION } }`); the report shows where the tool agrees |
 
 ## What it reads
 
@@ -83,6 +91,9 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mj
 | Name matches two or more CSV rows | `RESEARCH` · `ambiguous-match`, candidates listed |
 | CSV row has no approvals | `RESEARCH` · `no-approval-data` — unknown, not "does not sponsor" |
 | Approvals exist but no software title is listed | `RESEARCH` · `no-software-title-listed` |
+| Posting asks ≤ 3 years more than you, has a "II" title, or is off-target | `QUICK-APPLY` (one mismatch) |
+| Posting is far: Senior/Staff/Lead title, 4+ years more, or two mismatches | `NETWORK` |
+| Persona missing `target_role.experience_years` while `requirements` is configured | exit 2; never defaulted |
 | Posting not checked, or checker unsure | `CHECK-LIVENESS` — never treated as live |
 | `--live` URL on a host not in `live_hosts` | `CHECK-LIVENESS` · `host-not-allowed`; the page is never opened |
 | Posting closed | scored with liveness ×0 → `SKIP` |
@@ -97,4 +108,6 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mj
 - Sponsored titles are the CSV's top few only; "senior-only" means senior-only *on that list*.
 - Salary is national and company-wide, not Boston-adjusted or role-specific.
 - The allowlist checks the URL you give it. Redirect targets are named in `live_hosts` but not re-checked by the code, and a page can still load scripts and images from other hosts.
+- The years reader needs the word "experience" near the number; "12+ years in the SDLC" is missed (the title's "Staff" still caught that role). "Or MS + N years" isn't read.
+- Every "far" posting goes to NETWORK; there's no "way too far, skip" tier yet.
 - The software-title regex misses titles like "Full Stack Engineer" (no "software"/"backend"/"developer" word); such a title is not counted toward level fit.

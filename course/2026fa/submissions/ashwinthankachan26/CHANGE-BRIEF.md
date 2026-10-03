@@ -101,3 +101,11 @@ Note: the scorer treats a **missing** liveness field as 1.0 (open). My prototype
 ## Revisions
 
 *(append-only — date, what changed, why)*
+
+- **2026-10-03 — v0.2.** The original predictions above are unchanged. What happened:
+  - **Prediction 1** (employer missing from the CSV): happened live. SimpliSafe, HubSpot, Wayfair and others have no row → RESEARCH, never "no".
+  - **Prediction 2** (closed posting): exercised live with a deliberately invalid job ID → `expired_url` → SKIP.
+  - **§7** (past sponsorship ≠ willingness for this role): confirmed twice. Toast's senior-only list sits beside open SWE I/II postings. And reading postings showed 4 of 5 "tailor" jobs asked for 2–5+ years, which the company-level record can't show.
+  - **Not predicted:** the posting's own requirements were the biggest gap; liveness can't see application forms inside iframes (Formlabs); the scorer treats "work authorized" as "no sponsorship needed".
+  - **Change:** v0.2 reads each posting's experience line, title level and role type (proposed addition #6, now built), adds QUICK-APPLY, a 30/45/60-day lag table, an 80-posting sweep, and an agreement check against my own decisions (7/8 in-sample, 3/6 out-of-sample).
+  - **Persona corrected:** 1 year of experience (was 0), STEM-eligible (was unknown).
