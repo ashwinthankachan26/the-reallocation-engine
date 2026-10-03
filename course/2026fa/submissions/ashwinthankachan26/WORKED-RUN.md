@@ -192,7 +192,7 @@ Only **9 of 80** open software postings at these sponsors are worth application 
 ## Attestation — v0.2
 
 - Recipe: newgrad-backend-15-1252 v0.2.0
-- By: ⟨Ashwin S Thankachan — confirm each row, then sign⟩ · 2026-10-03
+- By: Ashwin S Thankachan · 2026-10-03
 
 ### Tested
 
