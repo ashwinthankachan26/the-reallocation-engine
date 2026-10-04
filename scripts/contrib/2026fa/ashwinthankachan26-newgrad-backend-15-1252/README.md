@@ -23,7 +23,7 @@ Every command writes to a **new** folder. The tool refuses a folder that already
 Sample run — offline, reproducible, uses the shipped data and saved page snapshots:
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sample
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-sample-$(date +%Y%m%d-%H%M%S)
 ```
 
 Tests — offline, no network, runs the real scorer on fictional fixture data:
@@ -43,14 +43,14 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/census.mj
 Sweep (v0.2): fetch every open software posting on the boards in `config.json` → `sweep` (one host, `boards-api.greenhouse.io`; emails and phones redacted before saving), then triage the saved postings offline:
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep/triage
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-sweep-$(date +%Y%m%d-%H%M%S)
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-sweep-triage-$(date +%Y%m%d-%H%M%S)
 ```
 
 Live run on your own role list. It opens each URL with the repo's Playwright checker, one at a time, and only if the URL's host is in `config.json` → `live_hosts` (`job-boards.greenhouse.io`, `boards.greenhouse.io`, `jobs.lever.co`, `jobs.ashbyhq.com`, and the careers sites Greenhouse redirected to on 2026-10-03: `www.pathai.com`, `www.klaviyo.com`, `careers.toasttab.com`, `careers.formlabs.com`):
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles <your-roles.json> --live --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-live
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles <your-roles.json> --live --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-live-$(date +%Y%m%d-%H%M%S)
 ```
 
 ## Options

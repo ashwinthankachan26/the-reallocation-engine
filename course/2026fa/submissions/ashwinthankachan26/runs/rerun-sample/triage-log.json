@@ -1,6 +1,6 @@
 {
   "_recipe": "recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md",
-  "recipe_version": "0.2.0",
+  "recipe_version": "0.2.1",
   "run_date": "2026-10-02",
   "mode": "sample (liveness from saved snapshots)",
   "inputs": {
@@ -212,8 +212,9 @@
         "role_type": {
           "value": "on-target",
           "matched": null,
-          "source": "your-input",
-          "basis": "title has no off-target term (your-input list)"
+          "source": "model-judgment",
+          "terms_source": "your-input",
+          "basis": "rule: title has no term from the off-target list (the list is your-input)"
         },
         "title_level": {
           "value": "entry-or-unstated",
@@ -265,7 +266,7 @@
       },
       "next_action": {
         "action": "TAILOR",
-        "why": "scorer said Apply, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level",
+        "why": "scorer said Apply, a non-senior software title is on the sponsored list, and the rule found nothing above my level in the posting (no years phrase or senior title it recognizes; read the quoted requirements before tailoring)",
         "source": "model-judgment"
       }
     },
@@ -366,8 +367,9 @@
         "role_type": {
           "value": "on-target",
           "matched": null,
-          "source": "your-input",
-          "basis": "title has no off-target term (your-input list)"
+          "source": "model-judgment",
+          "terms_source": "your-input",
+          "basis": "rule: title has no term from the off-target list (the list is your-input)"
         },
         "title_level": {
           "value": "entry-or-unstated",
@@ -517,8 +519,9 @@
         "role_type": {
           "value": "on-target",
           "matched": null,
-          "source": "your-input",
-          "basis": "title has no off-target term (your-input list)"
+          "source": "model-judgment",
+          "terms_source": "your-input",
+          "basis": "rule: title has no term from the off-target list (the list is your-input)"
         },
         "title_level": {
           "value": "entry-or-unstated",
@@ -668,8 +671,9 @@
         "role_type": {
           "value": "on-target",
           "matched": null,
-          "source": "your-input",
-          "basis": "title has no off-target term (your-input list)"
+          "source": "model-judgment",
+          "terms_source": "your-input",
+          "basis": "rule: title has no term from the off-target list (the list is your-input)"
         },
         "title_level": {
           "value": "entry-or-unstated",
@@ -721,7 +725,7 @@
       },
       "next_action": {
         "action": "TAILOR",
-        "why": "scorer said Consider, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level",
+        "why": "scorer said Consider, a non-senior software title is on the sponsored list, and the rule found nothing above my level in the posting (no years phrase or senior title it recognizes; read the quoted requirements before tailoring)",
         "source": "model-judgment"
       }
     },
@@ -820,8 +824,9 @@
         "role_type": {
           "value": "on-target",
           "matched": null,
-          "source": "your-input",
-          "basis": "title has no off-target term (your-input list)"
+          "source": "model-judgment",
+          "terms_source": "your-input",
+          "basis": "rule: title has no term from the off-target list (the list is your-input)"
         },
         "title_level": {
           "value": "entry-or-unstated",
@@ -969,8 +974,9 @@
         "role_type": {
           "value": "on-target",
           "matched": null,
-          "source": "your-input",
-          "basis": "title has no off-target term (your-input list)"
+          "source": "model-judgment",
+          "terms_source": "your-input",
+          "basis": "rule: title has no term from the off-target list (the list is your-input)"
         },
         "title_level": {
           "value": "entry-or-unstated",
@@ -1081,8 +1087,9 @@
         "role_type": {
           "value": "on-target",
           "matched": null,
-          "source": "your-input",
-          "basis": "title has no off-target term (your-input list)"
+          "source": "model-judgment",
+          "terms_source": "your-input",
+          "basis": "rule: title has no term from the off-target list (the list is your-input)"
         },
         "title_level": {
           "value": "entry-or-unstated",
@@ -1169,8 +1176,9 @@
         "role_type": {
           "value": "on-target",
           "matched": null,
-          "source": "your-input",
-          "basis": "title has no off-target term (your-input list)"
+          "source": "model-judgment",
+          "terms_source": "your-input",
+          "basis": "rule: title has no term from the off-target list (the list is your-input)"
         },
         "title_level": {
           "value": "entry-or-unstated",
@@ -1260,8 +1268,9 @@
         "role_type": {
           "value": "on-target",
           "matched": null,
-          "source": "your-input",
-          "basis": "title has no off-target term (your-input list)"
+          "source": "model-judgment",
+          "terms_source": "your-input",
+          "basis": "rule: title has no term from the off-target list (the list is your-input)"
         },
         "title_level": {
           "value": "entry-or-unstated",
@@ -1539,8 +1548,9 @@
         "role_type": {
           "value": "on-target",
           "matched": null,
-          "source": "your-input",
-          "basis": "title has no off-target term (your-input list)"
+          "source": "model-judgment",
+          "terms_source": "your-input",
+          "basis": "rule: title has no term from the off-target list (the list is your-input)"
         },
         "title_level": {
           "value": "entry-or-unstated",

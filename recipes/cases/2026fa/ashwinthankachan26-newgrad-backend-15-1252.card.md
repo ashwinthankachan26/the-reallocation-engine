@@ -50,7 +50,7 @@ Answer, per job: *does this company's sponsorship record include people at my le
 Sample run (offline; 11 hypothetical roles at real CSV companies; expected: TAILOR 2 · NETWORK 1 · SKIP 2 · RESEARCH 4 · CHECK-LIVENESS 2):
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sample
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-sample-$(date +%Y%m%d-%H%M%S)
 ```
 
 Tests (offline; fictional companies; real scorer; name the file, not the folder):
@@ -62,14 +62,14 @@ node --test scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/tr
 Sweep (v0.2): every open software posting on 9 public boards, from one named host (`boards-api.greenhouse.io`), contacts redacted; then triage offline:
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep/triage
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-sweep-$(date +%Y%m%d-%H%M%S)
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-sweep-triage-$(date +%Y%m%d-%H%M%S)
 ```
 
 Live run on your own list (opens only hosts named in `config.json` → `live_hosts`, one URL at a time; add `--human <file>` to compare with your own decisions):
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles <roles.json> --live --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-live
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles <roles.json> --live --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-live-$(date +%Y%m%d-%H%M%S)
 ```
 
 Refusal demo (expected: exit 2, `ead_start_date is missing — refusing to default it`, nothing written):

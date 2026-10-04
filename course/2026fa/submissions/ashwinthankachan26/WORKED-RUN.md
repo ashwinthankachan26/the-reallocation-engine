@@ -224,7 +224,7 @@ The tool marked **9 of 80** for an application (2 tailor, 7 quick-apply). The ot
 
 ## v0.2.1 — an outside review, verified and fixed
 
-After submitting, I ran a strict outside review. It found real errors, mostly in my documents. Every finding was checked against the files and data before any change. The fixes changed **no recommendation**: all 80 sweep postings get the same action as before. What changed is that the numbers and labels are now honest, and the tool refuses things it used to accept quietly.
+After submitting, I ran a strict outside review. It found real errors, mostly in my documents. Every finding was checked against the files and data before any change. The fixes changed **no recommendation for the 9 live or 80 saved sweep postings**: all 80 sweep actions are identical. The one intended behavior change (a closed posting at a company missing from the data now gets SKIP instead of RESEARCH) applies to none of them. What changed is that the numbers and labels are now honest, and the tool refuses things it used to accept quietly.
 
 | Before (v0.2) | After (v0.2.1) |
 |---|---|
@@ -236,7 +236,7 @@ After submitting, I ran a strict outside review. It found real errors, mostly in
 | closed posting at an unknown company → RESEARCH | → SKIP (closed beats unknown) |
 | "I ran every command", "I read each posting", "80 unseen postings" | stated precisely: who ran what; which postings I read; the sweep pool overlapped my live run |
 
-My verification runs are pasted in full in TEST-REPORT (v0.2.1 section) and logged in run log 3.
+My verification runs are excerpted in TEST-REPORT (v0.2.1 section; test-name lines trimmed, the full output kept in my notes) and logged in run log 3.
 
 ## Attestation — v0.2.1
 
@@ -256,6 +256,7 @@ My verification runs are pasted in full in TEST-REPORT (v0.2.1 section) and logg
 | **break attempt:** `--profile x.json` | refused, exit 2 | the scorer trap can't be triggered |
 | `npm run ats:liveness -- <Vestmark URL>` | active | the instructor's checker agrees with mine |
 | `git status` after all runs | only the 2 new folders; committed run folders unchanged | nothing tracked modified |
+| re-run after the v0.2.1 patch (version tag, role-type label, runnable example command), 20:54 | 19/19; both v0.2.1 folders tagged 0.2.1; role type `model-judgment`; all 80 actions identical; 3/6; README command runs into a fresh folder | metadata/label fix only; no action changes |
 
 ### Did not test
 
@@ -265,5 +266,6 @@ My verification runs are pasted in full in TEST-REPORT (v0.2.1 section) and logg
 
 ### Broke during testing, fixed
 
+- The overwrite guard made my own README example fail on a fresh clone (its folder was committed). Examples now use a new time-stamped folder each run.
 - My new date-refusal test first passed a bad date after a good one; the program reads the first `--today`, so the test proved nothing. Rewritten to pass only the bad date.
 

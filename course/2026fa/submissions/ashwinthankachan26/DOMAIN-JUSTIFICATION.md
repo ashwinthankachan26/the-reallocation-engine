@@ -26,7 +26,7 @@ The data has its own blind spot: **HubSpot, Wayfair, SimpliSafe, CarGurus and Co
 
 It takes over the **research half of the 2 research-and-apply hours**: sponsorship lookup, level check, posting requirements, liveness and timeline. **QUICK-APPLY** costs ~15 minutes instead of a tailored application. **NETWORK** feeds the **3 networking hours** with a specific ask ("does your team sponsor new grads?"). The project itself is **credibility-hours** work.
 
-**Estimate (labeled; the counts are measured, the hours are not):** I spend about **3–4 h/week** on this research (`your-input`). *Measured:* of 80 postings, the tool marked **71 for no application** (57 network-first, 14 unknown sponsorship) and 7 more for a quick application, leaving **2** worth full tailoring. *Estimate:* at ~3 minutes to read and reject a posting by hand, screening 80 takes ~3.5 h. That's **gross** screening time saved: the 14 RESEARCH and 57 NETWORK results still need some human time, and the tool agreed with me on only **3 of 6** blind checks, so I still skim its piles.
+**Estimate (labeled; the counts are measured, the hours are not):** I spend about **3–4 h/week** on this research (`your-input`). *Measured:* of 80 postings, the tool marked **71 for no application** (57 network-first, 14 unknown sponsorship) and 7 more for a quick application, leaving **2** worth full tailoring. *Estimate:* at ~3 minutes to read and reject a posting by hand, screening 80 takes ~4 h. That's **gross** screening time saved: the 14 RESEARCH and 57 NETWORK results still need some human time, and the tool agreed with me on only **3 of 6** blind checks, so I still skim its piles.
 
 ## Domain-specific failure modes
 

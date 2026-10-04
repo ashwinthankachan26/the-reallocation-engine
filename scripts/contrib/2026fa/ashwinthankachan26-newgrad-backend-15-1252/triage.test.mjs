@@ -128,7 +128,8 @@ test('v0.2 posting requirements: years phrase, new-grad wording, not stated, not
   assert.equal(android.years.quote_source, SRC.record, 'the quoted sentence is the posting\'s own words');
   assert.equal(android.years.source, SRC.model, 'the number taken from it is a rule\'s output');
   assert.equal(android.title_level.source, SRC.model);
-  assert.equal(android.role_type.source, SRC.input);
+  assert.equal(android.role_type.source, SRC.model, 'applying the off-target list is a rule');
+  assert.equal(android.role_type.terms_source, SRC.input, 'the list itself is my input');
 });
 
 test('v0.2 mismatch rule: my G5 rule, written down', () => {

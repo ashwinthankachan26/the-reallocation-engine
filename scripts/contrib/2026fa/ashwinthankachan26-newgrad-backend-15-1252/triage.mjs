@@ -30,7 +30,7 @@ import { classifyLiveness } from '../../../ats/liveness-core.mjs';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../../../..');
 const RECIPE = 'recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md';
-const RECIPE_VERSION = '0.2.0';
+const RECIPE_VERSION = '0.2.1';
 const SCORER = path.join(ROOT, 'scripts/score/role-scorer.mjs');
 
 function fail(msg) { console.error(`✗ ${msg}`); process.exit(2); }

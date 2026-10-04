@@ -230,7 +230,7 @@ export function postingRequirements(text, title, source, offTargetTerms = [], ti
   }
   const t = String(title || '');
   const hit = offTargetTerms.find((term) => new RegExp(`\\b${term}\\b`, 'i').test(t));
-  const roleType = { value: hit ? 'off-target' : 'on-target', matched: hit || null, source: SRC.input, basis: hit ? `title contains "${hit}" (off-target list: your-input)` : 'title has no off-target term (your-input list)' };
+  const roleType = { value: hit ? 'off-target' : 'on-target', matched: hit || null, source: SRC.model, terms_source: SRC.input, basis: hit ? `rule: title contains "${hit}" from the off-target list (the list is your-input)` : 'rule: title has no term from the off-target list (the list is your-input)' };
   return { status: 'read', years, role_type: roleType, title_level: titleLevel(t, titleSource) };
 }
 
@@ -268,7 +268,7 @@ export function nextAction(recommendation, level, mismatch = null) {
   if (mismatch && mismatch.value != null) {
     if (mismatch.value >= 2) return { action: 'NETWORK', why: `company sponsors at my level, but this posting is a poor fit: ${mismatch.parts.join('; ')} — network for a junior role there instead` };
     if (mismatch.value === 1) return { action: 'QUICK-APPLY', why: `close fit: ${mismatch.parts.join('; ')} — send the template résumé and ask for a referral, don't spend tailoring hours` };
-    return { action: 'TAILOR', why: `scorer said ${recommendation}, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level` };
+    return { action: 'TAILOR', why: `scorer said ${recommendation}, a non-senior software title is on the sponsored list, and the rule found nothing above my level in the posting (no years phrase or senior title it recognizes; read the quoted requirements before tailoring)` };
   }
   return { action: 'TAILOR', why: `scorer said ${recommendation} and a non-senior software title appears on the sponsored list (posting requirements not read — read them before tailoring)` };
 }

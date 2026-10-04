@@ -10,8 +10,8 @@ Run mode: **sample (liveness from saved snapshots)**. Liveness results come from
 
 | Role | Next action | Why | Sponsorship (record → tier) | Level fit (inference) | Posting asks | Liveness | Timeline | Composite |
 |---|---|---|---|---|---|---|---|---|
-| PathAI — Software Engineer I, Fullstack (Boston, MA (Hybrid)) | **TAILOR** | scorer said Apply, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level | 78 approvals, 97.5% → Proven | non-senior-title-present | no years phrase found [model-judgment] | active (×1) [record] | ×1 (slack 89d) | 0.315 |
-| Formlabs — Software Engineer - Print Pipeline (Somerville, MA) | **TAILOR** | scorer said Consider, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level | 70 approvals, 87.5% → Likely | non-senior-title-present | no years phrase found [model-judgment] | active (×1) [record] | ×1 (slack 89d) | 0.21 |
+| PathAI — Software Engineer I, Fullstack (Boston, MA (Hybrid)) | **TAILOR** | scorer said Apply, a non-senior software title is on the sponsored list, and the rule found nothing above my level in the posting (no years phrase or senior title it recognizes; read the quoted requirements before tailoring) | 78 approvals, 97.5% → Proven | non-senior-title-present | no years phrase found [model-judgment] | active (×1) [record] | ×1 (slack 89d) | 0.315 |
+| Formlabs — Software Engineer - Print Pipeline (Somerville, MA) | **TAILOR** | scorer said Consider, a non-senior software title is on the sponsored list, and the rule found nothing above my level in the posting (no years phrase or senior title it recognizes; read the quoted requirements before tailoring) | 70 approvals, 87.5% → Likely | non-senior-title-present | no years phrase found [model-judgment] | active (×1) [record] | ×1 (slack 89d) | 0.21 |
 | PathAI — Software Development Engineer in Test (SDET) (Boston, MA) | **QUICK-APPLY** | close fit: off-target role (sdet) — send the template résumé and ask for a referral, don't spend tailoring hours | 78 approvals, 97.5% → Proven | non-senior-title-present | "1–2 years of hands-on experience" [record] → 1 [model-judgment] · off-target: sdet | active (×1) [record] | ×1 (slack 89d) | 0.315 |
 | Vestmark — Software Engineer (Boston, MA (Hybrid)) | **QUICK-APPLY** | close fit: asks 2+ years vs my 1 (close) — send the template résumé and ask for a referral, don't spend tailoring hours | 52 approvals, 100% → Proven | non-senior-title-present | "2-4 years of professional software engineering experience" [record] → 2 [model-judgment] | active (×1) [record] | ×1 (slack 89d) | 0.315 |
 | Klaviyo — Software Engineer II - Recommendations (Boston, MA) | **QUICK-APPLY** | close fit: asks 2+ years vs my 1 and title level "II" (close) — send the template résumé and ask for a referral, don't spend tailoring hours | 154 approvals, 97.5% → Proven | non-senior-title-present | "2+ years of professional software engineering experience" [record] → 2 [model-judgment] | active (×1) [record] | ×1 (slack 89d) | 0.315 |
@@ -231,7 +231,7 @@ National median for Software Developers (SOC 15-1252.00): **$133,080** (BLS, rec
 
 ## Run record
 
-- Recipe: `recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md` v0.2.0 · run date 2026-10-03
+- Recipe: `recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md` v0.2.1 · run date 2026-10-03
 - Inputs: `course/2026fa/submissions/ashwinthankachan26/runs/sweep/roles.sweep.json`, `scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/persona.newgrad.json`, `scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/config.json`
 - Data: `data/80-days-to-stay/80-days-csv/mapped_student_employment_targets_v3.csv`, `data/bls/compact/soc_occupation_compact.csv`
 - Scorer: `scripts/score/role-scorer.mjs` → `✓ scored 66 roles → Apply 61 · Consider 5 · Skip 0 (skip 0%)`

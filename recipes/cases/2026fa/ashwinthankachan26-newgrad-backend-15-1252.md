@@ -52,20 +52,20 @@ The sample path, a live run on 9 real postings, and an 80-posting sweep all run 
 The one command (sample mode, offline). Every command writes to a **new** folder: the tool refuses a folder that already holds a run unless you pass `--overwrite`, so the committed evidence in `runs/sample/`, `runs/live/`, `runs/live-v0.2/` and `runs/sweep/` is never replaced by accident.
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sample
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-sample-$(date +%Y%m%d-%H%M%S)
 ```
 
 Live run on real postings, compared with the person's own decisions (v0.2):
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/live/roles.live.json --live --today 2026-10-03 --human course/2026fa/submissions/ashwinthankachan26/runs/live/human-decisions.json --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-live
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/live/roles.live.json --live --today 2026-10-03 --human course/2026fa/submissions/ashwinthankachan26/runs/live/human-decisions.json --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-live-$(date +%Y%m%d-%H%M%S)
 ```
 
 Unfiltered sweep (v0.2): fetch once, then triage offline:
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep/triage
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-sweep-$(date +%Y%m%d-%H%M%S)
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/try-sweep-triage-$(date +%Y%m%d-%H%M%S)
 ```
 
 Tests (offline; fictional fixture companies; the real scorer):
@@ -195,7 +195,7 @@ Timeline arithmetic: last unemployment day = EAD start + (ceiling − days used)
 | 4 | Boston-adjusted wage via `scripts/bls/local-wage-adjustment.py`, once its `.venv` and `requirements.txt` ship | National medians overstate or understate local offers | `[TODO: DEV]` |
 | 5 | Fix the scorer's authorization regex so "work authorized (EAD)" still needs sponsorship | A maintained file outside the student namespace; a maintainer decision | `[TODO: APPROVE]` |
 | 6 | ~~A posting-requirements gate~~ **built in v0.2** (`postingRequirements`, `titleLevel`, `mismatchCount` in `lib.mjs`; 5 tests). Closed: script exists, conformance passes, live + sweep runs logged | The v0.1 live run's biggest miss | closed |
-| 7 | A "too far → SKIP" tier for postings far above the persona's level (the out-of-sample check: I skipped a 12+ year Staff role the tool sent to NETWORK, and an 8+ year Staff role at a company with no sponsorship data that the tool sent to RESEARCH). The threshold is a human decision; it must be set before seeing results, not tuned to these 6 | 2 of 3 out-of-sample disagreements | `[TODO: DEV]` |
+| 7 | A "too far → SKIP" tier for postings far above the persona's level (the out-of-sample check: I skipped a 12+ year Staff role the tool sent to NETWORK, and an 8+ year Staff role at a company with no sponsorship data that the tool sent to RESEARCH). The threshold is a human decision; it must be set before seeing results, not tuned to these 6 | 2 of the 3 out-of-sample disagreements were roles I'd skip as far too senior (one went to NETWORK, one to RESEARCH) | `[TODO: DEV]` |
 | 8 | Broaden the years reader: "N+ years in/with …" without the word "experience", and "or MS + N years" equivalences | the missed Cohere "12+ years in the SDLC" | `[TODO: DEV]` |
 | 9 | An E-Verify enrollment source for the STEM OPT extension (e.g. the public E-Verify employer search, downloaded and verified first) | a STEM-eligible student can't use the extension at a non-E-Verify employer | `[TODO: DATA SOURCE]` |
 

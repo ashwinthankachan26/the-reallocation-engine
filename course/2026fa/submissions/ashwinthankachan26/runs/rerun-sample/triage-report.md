@@ -10,8 +10,8 @@ Run mode: **sample (liveness from saved snapshots)**. Liveness results come from
 
 | Role | Next action | Why | Sponsorship (record → tier) | Level fit (inference) | Posting asks | Liveness | Timeline | Composite |
 |---|---|---|---|---|---|---|---|---|
-| Abacus Insights — Backend Software Engineer, New Grad | **TAILOR** | scorer said Apply, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level | 22 approvals, 100% → Proven | non-senior-title-present | no years phrase found [model-judgment] | active (×1) [your-input] | ×1 (slack 89d) | 0.315 |
-| SilverRail Technologies — Software Developer | **TAILOR** | scorer said Consider, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level | 4 approvals, 100% → Likely | non-senior-title-present | no years phrase found [model-judgment] | active (×1) [your-input] | ×1 (slack 89d) | 0.21 |
+| Abacus Insights — Backend Software Engineer, New Grad | **TAILOR** | scorer said Apply, a non-senior software title is on the sponsored list, and the rule found nothing above my level in the posting (no years phrase or senior title it recognizes; read the quoted requirements before tailoring) | 22 approvals, 100% → Proven | non-senior-title-present | no years phrase found [model-judgment] | active (×1) [your-input] | ×1 (slack 89d) | 0.315 |
+| SilverRail Technologies — Software Developer | **TAILOR** | scorer said Consider, a non-senior software title is on the sponsored list, and the rule found nothing above my level in the posting (no years phrase or senior title it recognizes; read the quoted requirements before tailoring) | 4 approvals, 100% → Likely | non-senior-title-present | no years phrase found [model-judgment] | active (×1) [your-input] | ×1 (slack 89d) | 0.21 |
 | Acquia — Software Engineer I, Backend | **NETWORK** | scorer said Apply, but every sponsored software title on the list is senior — ask a contact whether new grads are sponsored before tailoring | 18 approvals, 100% → Proven | senior-only-on-list | no years phrase found [model-judgment] | active (×1) [your-input] | ×1 (slack 89d) | 0.315 |
 | UFA — Junior Software Engineer | **CHECK-LIVENESS** | not-checked | 2 approvals, 100% → Likely | non-senior-title-present | not read | not-checked [your-input] | ×1 (slack 89d) | — |
 | Pubmark — Software Engineer | **CHECK-LIVENESS** | no_apply_control | 4 approvals, 100% → Likely | non-senior-title-present | no years phrase found [model-judgment] | uncertain [your-input] | ×1 (slack 89d) | — |
@@ -79,7 +79,7 @@ National median for Software Developers (SOC 15-1252.00): **$133,080** (BLS, rec
 
 ## Run record
 
-- Recipe: `recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md` v0.2.0 · run date 2026-10-02
+- Recipe: `recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md` v0.2.1 · run date 2026-10-02
 - Inputs: `scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/roles.sample.json`, `scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/persona.newgrad.json`, `scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/config.json`
 - Data: `data/80-days-to-stay/80-days-csv/mapped_student_employment_targets_v3.csv`, `data/bls/compact/soc_occupation_compact.csv`
 - Scorer: `scripts/score/role-scorer.mjs` → `✓ scored 5 roles → Apply 2 · Consider 1 · Skip 2 (skip 40%)`

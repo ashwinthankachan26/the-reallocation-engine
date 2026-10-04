@@ -270,3 +270,18 @@ Checked afterwards from the saved logs: the new sweep run gives **identical acti
 
 Tests: **19 pass** (was 17). The v0.2 outputs in `runs/live-v0.2/` and `runs/sweep/triage/` are kept unchanged as history; they carry the old labels.
 
+### v0.2.1 patch (second outside re-review, 20:54, run by me)
+
+A re-review of `a444c4f` found 6 smaller issues, each verified before changing anything: the README's example command wrote into a folder that is now committed, so the overwrite guard refused it on a fresh clone; generated runs said version `0.2.0`; the off-target classification was labeled `your-input` (the term list is mine, applying it is a rule → `model-judgment`); the domain page said 80 × 3 min ≈ 3.5 h (it's 4 h); and four leftover phrases. Fixed. Example commands now write to a new time-stamped folder (`runs/try-…-$(date +%Y%m%d-%H%M%S)`), so they run on any fresh clone, every time. The two v0.2.1 run folders were regenerated on purpose with `--overwrite`; v0.1/v0.2 history untouched.
+
+```text
+== Sat Oct  3 20:54:17 EDT 2026 | v0.2.1 patch re-run
+ℹ pass 19
+ℹ fail 0
+✓ triaged 11 roles → TAILOR 2 · NETWORK 1 · SKIP 2 · RESEARCH 4 · CHECK-LIVENESS 2
+✓ triaged 80 roles → NETWORK 57 · QUICK-APPLY 7 · TAILOR 2 · RESEARCH 14
+version: 0.2.1 0.2.1 | role_type label: model-judgment | 80 actions identical to v0.2: true | agreement 3/6
+== README command, fresh folder:
+✓ triaged 11 roles → TAILOR 2 · NETWORK 1 · SKIP 2 · RESEARCH 4 · CHECK-LIVENESS 2
+only modified files, no stray folders ✓
+```
