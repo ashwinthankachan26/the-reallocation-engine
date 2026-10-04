@@ -1,5 +1,13 @@
 # New-grad backend sponsor-level triage — human card
 
+## Executive summary
+
+**What this is:** a one-page guide to a small job-search tool for an international student graduating in December 2026 who wants a new-graduate backend software job and will need visa sponsorship later.
+
+**Why read it:** the tool checks three things a posting doesn't show: whether the company has sponsored people at a new-graduate level, whether this particular posting asks for more experience than you have, and whether hiring could finish before your post-graduation work window closes.
+
+**What it decides:** nothing on its own. For each job it suggests tailor, quick-apply, network first, skip, research by hand, or check the posting, shows where every piece of evidence came from, and leaves the decision to you.
+
 **Audience:** an F-1 master's student, graduating December 2026, choosing which new-grad backend software jobs (SOC 15-1252) deserve a tailored application.  
 **Agent twin:** `recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md`  
 **Chapters:** 7 (who sponsors), 8 (is the job real), 10 (visa timeline), 11 (the scorer).
@@ -25,7 +33,7 @@ Answer, per job: *does this company's sponsorship record include people at my le
 - Titles beyond the CSV's top few. *Toast: 150 approvals, listed software titles all Senior/Staff, yet the list can't say whether new grads were sponsored.*
 - Companies with no approval data (about 95% of rows): unknown, not "no".
 - **Every way a posting phrases experience** ("12+ years in the SDLC" was missed) or "or MS + N years" equivalences.
-- **"Way too far" vs "far"**: the tool sends both to NETWORK; I skip 8–12+ year roles.
+- **"Way too far" vs "far"**: the tool sends every far posting to NETWORK (or to RESEARCH when sponsorship is unknown); I'd simply skip roles asking 8–12+ years.
 - **E-Verify enrollment**, which the STEM extension requires.
 - Résumé fit (not computed, so the composite maxes at 0.315), recent funding (data ends September 2025), and Boston pay (national medians only).
 
@@ -42,7 +50,7 @@ Answer, per job: *does this company's sponsorship record include people at my le
 Sample run (offline; 11 hypothetical roles at real CSV companies; expected: TAILOR 2 · NETWORK 1 · SKIP 2 · RESEARCH 4 · CHECK-LIVENESS 2):
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/sample
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sample
 ```
 
 Tests (offline; fictional companies; real scorer; name the file, not the folder):
@@ -54,14 +62,14 @@ node --test scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/tr
 Sweep (v0.2): every open software posting on 9 public boards, from one named host (`boards-api.greenhouse.io`), contacts redacted; then triage offline:
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/sweep/triage
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep/triage
 ```
 
 Live run on your own list (opens only hosts named in `config.json` → `live_hosts`, one URL at a time; add `--human <file>` to compare with your own decisions):
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles <roles.json> --live --out-dir course/2026fa/submissions/ashwinthankachan26/runs/live
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles <roles.json> --live --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-live
 ```
 
 Refusal demo (expected: exit 2, `ead_start_date is missing — refusing to default it`, nothing written):

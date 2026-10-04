@@ -1,0 +1,1599 @@
+{
+  "_recipe": "recipes/cases/2026fa/ashwinthankachan26-newgrad-backend-15-1252.md",
+  "recipe_version": "0.2.0",
+  "run_date": "2026-10-02",
+  "mode": "sample (liveness from saved snapshots)",
+  "inputs": {
+    "roles": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/roles.sample.json",
+    "persona": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/persona.newgrad.json",
+    "config": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/config.json",
+    "csv": "data/80-days-to-stay/80-days-csv/mapped_student_employment_targets_v3.csv",
+    "bls": "data/bls/compact/soc_occupation_compact.csv",
+    "scorer": "scripts/score/role-scorer.mjs"
+  },
+  "assumptions": {
+    "source": "your-input",
+    "sponsorship": {
+      "proven_min_approvals": 10,
+      "proven_min_rate": 90,
+      "p_proven": 0.9,
+      "p_likely": 0.6
+    },
+    "timeline": {
+      "hiring_lag_days": 45,
+      "buffer_days": 30
+    },
+    "visa": {
+      "ead_start_date": "2027-02-01",
+      "unemployment_ceiling": 90,
+      "unemployment_days_used": 0
+    },
+    "target_soc": "15-1252",
+    "live_hosts": [
+      "job-boards.greenhouse.io",
+      "boards.greenhouse.io",
+      "jobs.lever.co",
+      "jobs.ashbyhq.com",
+      "www.pathai.com",
+      "www.klaviyo.com",
+      "careers.toasttab.com",
+      "careers.formlabs.com"
+    ],
+    "requirements": {
+      "_note": "v0.2 posting-requirements rule = the author's own G5 rule from the 2026-10-03 live run, written down. close_gap_years: a posting asking up to this many years more than mine is 'close' (quick apply); more is 'far' (network).",
+      "close_gap_years": 3,
+      "off_target_title_terms": [
+        "android",
+        "ios",
+        "mobile",
+        "embedded",
+        "firmware",
+        "frontend",
+        "front-end",
+        "hardware",
+        "sdet",
+        "designer"
+      ],
+      "my_experience_years": 1
+    },
+    "lag_scenarios": [
+      30,
+      45,
+      60
+    ]
+  },
+  "apply_by": [
+    {
+      "lag_days": 30,
+      "apply_by": "2027-03-02",
+      "last_unemployment_day": "2027-05-01"
+    },
+    {
+      "lag_days": 45,
+      "apply_by": "2027-02-15",
+      "last_unemployment_day": "2027-05-01"
+    },
+    {
+      "lag_days": 60,
+      "apply_by": "2027-01-31",
+      "last_unemployment_day": "2027-05-01"
+    }
+  ],
+  "human_agreement": null,
+  "scorer_stdout": "✓ scored 5 roles → Apply 2 · Consider 1 · Skip 2 (skip 40%)\n  course/2026fa/submissions/ashwinthankachan26/runs/rerun-sample/role-scores.json  +  course/2026fa/submissions/ashwinthankachan26/runs/rerun-sample/role-scores.md",
+  "counts": {
+    "TAILOR": 2,
+    "NETWORK": 1,
+    "SKIP": 2,
+    "RESEARCH": 4,
+    "CHECK-LIVENESS": 2
+  },
+  "gaps": [],
+  "gates": [
+    {
+      "gate": "G1 input",
+      "status": "passed (machine)",
+      "detail": "11 roles parsed"
+    },
+    {
+      "gate": "G2 sponsorship evidence",
+      "status": "awaiting human",
+      "detail": "confirm each CSV match is the right company"
+    },
+    {
+      "gate": "G3 liveness",
+      "status": "awaiting human",
+      "detail": "confirm snapshot/live results; CHECK-LIVENESS roles need a check"
+    },
+    {
+      "gate": "G4 timeline",
+      "status": "awaiting human",
+      "detail": "confirm EAD date and hiring-lag assumption still hold"
+    },
+    {
+      "gate": "G5 decision",
+      "status": "awaiting human",
+      "detail": "the person marks tailor / network / skip; the tool does not apply"
+    }
+  ],
+  "roles": [
+    {
+      "role_id": "r01-abacus",
+      "company": "Abacus Insights",
+      "title": "Backend Software Engineer, New Grad",
+      "url": "https://jobs.example.com/abacus-insights/backend-new-grad",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "abacusinsights",
+        "candidates": [
+          "ABACUS INSIGHTS INC"
+        ],
+        "company_name": {
+          "value": "ABACUS INSIGHTS INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 22,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 22 approvals at 100% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "1 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Software Engineer"
+        ],
+        "titles_seen": [
+          "Software Engineer",
+          "Business Analyst Manager - Data Distribution Team"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 110510,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.83,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "snapshot",
+        "source": "your-input",
+        "snapshot": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/snapshots/active.json"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "source": "model-judgment",
+          "quote": null,
+          "quote_source": "your-input",
+          "basis": "the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "model-judgment",
+          "title_source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-02",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0.315,
+        "recommendation": "Apply",
+        "reason": "composite 0.315 ≥ 0.3, gates healthy",
+        "arithmetic": "(0.9·0.35) × 1 × 1 = 0.315"
+      },
+      "next_action": {
+        "action": "TAILOR",
+        "why": "scorer said Apply, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "r02-acquia",
+      "company": "Acquia",
+      "title": "Software Engineer I, Backend",
+      "url": "https://jobs.example.com/acquia/swe-1-backend",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "acquia",
+        "candidates": [
+          "ACQUIA INC"
+        ],
+        "company_name": {
+          "value": "ACQUIA INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 18,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 18 approvals at 100% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "senior-only-on-list",
+        "source": "model-judgment",
+        "basis": "2 software title(s) in the top-titles list, 2 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Staff Software Engineer",
+          "Senior Software Engineer"
+        ],
+        "titles_seen": [
+          "Staff Software Engineer",
+          "Senior Software Engineer",
+          "Lead Implementation Consultant"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 165000.16,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 1.24,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "snapshot",
+        "source": "your-input",
+        "snapshot": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/snapshots/active.json"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "source": "model-judgment",
+          "quote": null,
+          "quote_source": "your-input",
+          "basis": "the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "model-judgment",
+          "title_source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-02",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0.315,
+        "recommendation": "Apply",
+        "reason": "composite 0.315 ≥ 0.3, gates healthy",
+        "arithmetic": "(0.9·0.35) × 1 × 1 = 0.315"
+      },
+      "next_action": {
+        "action": "NETWORK",
+        "why": "scorer said Apply, but every sponsored software title on the list is senior — ask a contact whether new grads are sponsored before tailoring",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "r03-acuitymd",
+      "company": "AcuityMD",
+      "title": "Backend Engineer",
+      "url": "https://jobs.example.com/acuitymd/backend",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "acuitymd",
+        "candidates": [
+          "ACUITYMD INC"
+        ],
+        "company_name": {
+          "value": "ACUITYMD INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 16,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 16 approvals at 100% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "1 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Software Engineer 2"
+        ],
+        "titles_seen": [
+          "Software Engineer 2"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 102544,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.771,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 0,
+        "result": "expired",
+        "code": "expired_body",
+        "reason": "pattern matched: job (is )?no longer available",
+        "method": "snapshot",
+        "source": "your-input",
+        "snapshot": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/snapshots/expired.json"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "source": "model-judgment",
+          "quote": null,
+          "quote_source": "your-input",
+          "basis": "the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "model-judgment",
+          "title_source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-02",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0,
+        "recommendation": "Skip",
+        "reason": "gated: liveness ≈ 0.000 (a closed gate zeroes the composite regardless of votes)",
+        "arithmetic": "(0.9·0.35) × 0 × 1 = 0.000"
+      },
+      "next_action": {
+        "action": "SKIP",
+        "why": "scorer recommended Skip",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "r04-silverrail",
+      "company": "SilverRail Technologies",
+      "title": "Software Developer",
+      "url": "https://jobs.example.com/silverrail/software-developer",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "silverrailtechnologies",
+        "candidates": [
+          "SILVERRAIL TECHNOLOGIES INC"
+        ],
+        "company_name": {
+          "value": "SILVERRAIL TECHNOLOGIES INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 4,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Likely",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 4 approvals at 100% → Likely (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.6,
+          "source": "model-judgment",
+          "basis": "tier Likely → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "1 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Software Developer"
+        ],
+        "titles_seen": [
+          "Software Developer"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 100349,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.754,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "snapshot",
+        "source": "your-input",
+        "snapshot": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/snapshots/active.json"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "source": "model-judgment",
+          "quote": null,
+          "quote_source": "your-input",
+          "basis": "the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "model-judgment",
+          "title_source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-02",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0.21,
+        "recommendation": "Consider",
+        "reason": "composite 0.210 in the Consider band [0.2, 0.3)",
+        "arithmetic": "(0.6·0.35) × 1 × 1 = 0.210"
+      },
+      "next_action": {
+        "action": "TAILOR",
+        "why": "scorer said Consider, a non-senior software title is on the sponsored list, and the posting asks for nothing above my level",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "r05-abacus-late",
+      "company": "Abacus Insights",
+      "title": "Platform Engineer (applied April 2027)",
+      "url": "https://jobs.example.com/abacus-insights/platform",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "abacusinsights",
+        "candidates": [
+          "ABACUS INSIGHTS INC"
+        ],
+        "company_name": {
+          "value": "ABACUS INSIGHTS INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 22,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 22 approvals at 100% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "1 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Software Engineer"
+        ],
+        "titles_seen": [
+          "Software Engineer",
+          "Business Analyst Manager - Data Distribution Team"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 110510,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.83,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "snapshot",
+        "source": "your-input",
+        "snapshot": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/snapshots/active.json"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "source": "model-judgment",
+          "quote": null,
+          "quote_source": "your-input",
+          "basis": "the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "model-judgment",
+          "title_source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 0,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2027-04-10",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-05-25",
+        "slack_days": -24,
+        "basis": "start 2027-05-25 vs last unemployment day 2027-05-01 → slack -24d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 0,
+          "slack_days": -9
+        },
+        {
+          "lag_days": 45,
+          "factor": 0,
+          "slack_days": -24
+        },
+        {
+          "lag_days": 60,
+          "factor": 0,
+          "slack_days": -39
+        }
+      ],
+      "blockers": [],
+      "scorer": {
+        "composite": 0,
+        "recommendation": "Skip",
+        "reason": "gated: timeline ≈ 0.000 (a closed gate zeroes the composite regardless of votes)",
+        "arithmetic": "(0.9·0.35) × 1 × 0 = 0.000"
+      },
+      "next_action": {
+        "action": "SKIP",
+        "why": "scorer recommended Skip",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "r06-affectiva",
+      "company": "Affectiva",
+      "title": "Backend Engineer",
+      "url": "https://jobs.example.com/affectiva/backend",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "affectiva",
+        "candidates": [
+          "AFFECTIVA INC"
+        ],
+        "company_name": {
+          "value": "AFFECTIVA INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 10,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Proven",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 10 approvals at 100% → Proven (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.9,
+          "source": "model-judgment",
+          "basis": "tier Proven → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "no-software-title-listed",
+        "source": "model-judgment",
+        "basis": "0 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [],
+        "titles_seen": [
+          "Marketing Analytics Manager"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 90000,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.676,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "snapshot",
+        "source": "your-input",
+        "snapshot": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/snapshots/active.json"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "source": "model-judgment",
+          "quote": null,
+          "quote_source": "your-input",
+          "basis": "the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "model-judgment",
+          "title_source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-02",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [
+        {
+          "route": "RESEARCH",
+          "reason": "no-software-title-listed"
+        }
+      ],
+      "next_action": {
+        "action": "RESEARCH",
+        "why": "no-software-title-listed",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "r07-6k",
+      "company": "6K Inc",
+      "title": "Software Engineer",
+      "url": "https://jobs.example.com/6k/software-engineer",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "6k",
+        "candidates": [
+          "6K INC"
+        ],
+        "company_name": {
+          "value": "6K INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "no-approval-data"
+      },
+      "level_fit": {
+        "value": "no-software-title-listed",
+        "source": "model-judgment",
+        "basis": "0 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [],
+        "titles_seen": []
+      },
+      "salary": {
+        "status": "missing",
+        "reason": "no median_salary_offered in CSV row"
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "snapshot",
+        "source": "your-input",
+        "snapshot": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/snapshots/active.json"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "source": "model-judgment",
+          "quote": null,
+          "quote_source": "your-input",
+          "basis": "the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "model-judgment",
+          "title_source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-02",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [
+        {
+          "route": "RESEARCH",
+          "reason": "no-approval-data"
+        }
+      ],
+      "next_action": {
+        "action": "RESEARCH",
+        "why": "no-approval-data",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "r08-northwind",
+      "company": "Northwind Ledger Systems",
+      "title": "Backend Engineer (fictional company)",
+      "url": "https://jobs.example.com/northwind/backend",
+      "csv_match": {
+        "status": "no-csv-row",
+        "normalized_key": "northwindledgersystems",
+        "candidates": []
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "snapshot",
+        "source": "your-input",
+        "snapshot": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/snapshots/active.json"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "source": "model-judgment",
+          "quote": null,
+          "quote_source": "your-input",
+          "basis": "the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "model-judgment",
+          "title_source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-02",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [
+        {
+          "route": "RESEARCH",
+          "reason": "no-csv-row"
+        }
+      ],
+      "next_action": {
+        "action": "RESEARCH",
+        "why": "no-csv-row",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "r09-avava",
+      "company": "Avava",
+      "title": "Software Engineer",
+      "url": "https://jobs.example.com/avava/software-engineer",
+      "csv_match": {
+        "status": "ambiguous-match",
+        "normalized_key": "avava",
+        "candidates": [
+          "AVAVA INC",
+          "AVAVA LLC"
+        ]
+      },
+      "liveness": {
+        "cleared": true,
+        "factor": 1,
+        "result": "active",
+        "code": "apply_control_visible",
+        "reason": "visible apply control detected",
+        "method": "snapshot",
+        "source": "your-input",
+        "snapshot": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/snapshots/active.json"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "source": "model-judgment",
+          "quote": null,
+          "quote_source": "your-input",
+          "basis": "the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "model-judgment",
+          "title_source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-02",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [
+        {
+          "route": "RESEARCH",
+          "reason": "ambiguous-match"
+        }
+      ],
+      "next_action": {
+        "action": "RESEARCH",
+        "why": "ambiguous-match",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "r10-ufa",
+      "company": "UFA",
+      "title": "Junior Software Engineer",
+      "url": "https://jobs.example.com/ufa/junior-swe",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "ufa",
+        "candidates": [
+          "UFA INC"
+        ],
+        "company_name": {
+          "value": "UFA INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 2,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Likely",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 2 approvals at 100% → Likely (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.6,
+          "source": "model-judgment",
+          "basis": "tier Likely → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "1 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Junior Software Engineer"
+        ],
+        "titles_seen": [
+          "Junior Software Engineer"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 87173,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.655,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": false,
+        "factor": null,
+        "result": "not-checked",
+        "code": "not-checked",
+        "reason": "no liveness check was run for this role",
+        "source": "your-input"
+      },
+      "posting_requirements": {
+        "status": "not-read",
+        "reason": "no posting text available"
+      },
+      "mismatch": {
+        "value": null,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "posting text not read"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-02",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [
+        {
+          "route": "CHECK-LIVENESS",
+          "reason": "not-checked"
+        }
+      ],
+      "next_action": {
+        "action": "CHECK-LIVENESS",
+        "why": "not-checked",
+        "source": "model-judgment"
+      }
+    },
+    {
+      "role_id": "r11-pubmark",
+      "company": "Pubmark",
+      "title": "Software Engineer",
+      "url": "https://jobs.example.com/pubmark/software-engineer",
+      "csv_match": {
+        "status": "found",
+        "normalized_key": "pubmark",
+        "candidates": [
+          "PUBMARK INC"
+        ],
+        "company_name": {
+          "value": "PUBMARK INC",
+          "source": "record"
+        },
+        "state": {
+          "value": "MA",
+          "source": "record"
+        }
+      },
+      "sponsorship": {
+        "status": "scored",
+        "approvals": {
+          "value": 4,
+          "source": "record",
+          "field": "Total Approvals"
+        },
+        "approval_rate": {
+          "value": 100,
+          "source": "record",
+          "field": "Approval_Rate"
+        },
+        "tier": {
+          "value": "Likely",
+          "source": "model-judgment",
+          "basis": "Proven needs approvals ≥ 10 AND rate ≥ 90%; this row has 4 approvals at 100% → Likely (thresholds: your-input)"
+        },
+        "p": {
+          "value": 0.6,
+          "source": "model-judgment",
+          "basis": "tier Likely → p (your-input mapping)"
+        }
+      },
+      "level_fit": {
+        "value": "non-senior-title-present",
+        "source": "model-judgment",
+        "basis": "1 software title(s) in the top-titles list, 0 senior; the list is truncated, so absence is not proof",
+        "software_titles": [
+          "Software Engineer"
+        ],
+        "titles_seen": [
+          "Software Engineer"
+        ]
+      },
+      "salary": {
+        "status": "ok",
+        "company_median_offered": {
+          "value": 128000,
+          "source": "record",
+          "field": "median_salary_offered (company-wide, all sponsored titles)"
+        },
+        "bls_national_median": {
+          "value": 133080,
+          "source": "record",
+          "field": "annual_median_wage, SOC 15-1252.00"
+        },
+        "ratio": {
+          "value": 0.962,
+          "source": "model-judgment",
+          "basis": "company median ÷ national median; not metro-adjusted, not role-specific"
+        }
+      },
+      "liveness": {
+        "cleared": false,
+        "factor": null,
+        "result": "uncertain",
+        "code": "no_apply_control",
+        "reason": "content present but no visible apply control found",
+        "method": "snapshot",
+        "source": "your-input",
+        "snapshot": "scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/fixtures/snapshots/uncertain.json"
+      },
+      "posting_requirements": {
+        "status": "read",
+        "years": {
+          "value": null,
+          "source": "model-judgment",
+          "quote": null,
+          "quote_source": "your-input",
+          "basis": "the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum"
+        },
+        "role_type": {
+          "value": "on-target",
+          "matched": null,
+          "source": "your-input",
+          "basis": "title has no off-target term (your-input list)"
+        },
+        "title_level": {
+          "value": "entry-or-unstated",
+          "matched": null,
+          "source": "model-judgment",
+          "title_source": "your-input",
+          "basis": "no level word in the posting title (rule)"
+        }
+      },
+      "mismatch": {
+        "value": 0,
+        "parts": [],
+        "source": "model-judgment",
+        "basis": "0 → tailor · 1 → quick apply · 2+ → network (level = stricter of years asked and title level; close = up to 3 years more than mine or a II title; your-input)"
+      },
+      "timeline": {
+        "factor": 1,
+        "source": "your-input",
+        "ead_start": "2027-02-01",
+        "apply_date": "2026-10-02",
+        "last_unemployment_day": "2027-05-01",
+        "earliest_start": "2027-02-01",
+        "slack_days": 89,
+        "basis": "start 2027-02-01 vs last unemployment day 2027-05-01 → slack 89d (buffer 30d, lag 45d: your-input)"
+      },
+      "lag_sensitivity": [
+        {
+          "lag_days": 30,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 45,
+          "factor": 1,
+          "slack_days": 89
+        },
+        {
+          "lag_days": 60,
+          "factor": 1,
+          "slack_days": 89
+        }
+      ],
+      "blockers": [
+        {
+          "route": "CHECK-LIVENESS",
+          "reason": "no_apply_control"
+        }
+      ],
+      "next_action": {
+        "action": "CHECK-LIVENESS",
+        "why": "no_apply_control",
+        "source": "model-judgment"
+      }
+    }
+  ]
+}

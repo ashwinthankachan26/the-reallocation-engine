@@ -98,6 +98,7 @@ test('timeline gate: comfortable, squeezed, impossible, and refusing a missing E
   assert.equal(timelineFactor({ ...base, daysUsed: 80, applyDate: '2026-10-02' }).factor, 0.3);   // 10 days left → slack 9
   assert.equal(timelineFactor({ ...base, daysUsed: 90, applyDate: '2026-10-02' }).factor, 0);     // every day used
   assert.throws(() => timelineFactor({ ...base, eadStart: null, applyDate: '2026-10-02' }), /refusing to default/);
+  assert.throws(() => timelineFactor({ ...base, eadStart: '2027-02-30', applyDate: '2026-10-02' }), /refusing to default/, 'impossible calendar date');
 });
 
 test('live host allowlist: exact hosts, dot-suffix domains, nothing else', () => {
@@ -118,12 +119,15 @@ test('v0.2 posting requirements: years phrase, new-grad wording, not stated, not
   assert.equal(postingRequirements('You have at least three years of professional experience.', 'SWE', SRC.record, terms).years.value, 3);
   const ng = postingRequirements('Open to new grads graduating in December 2026.', 'Software Engineer I', SRC.record, terms);
   assert.equal(ng.years.value, 0);
+  assert.equal(ng.years.source, SRC.model, 'reading "new grads" as 0 years is an inference, not a record');
   const none = postingRequirements('We build software. Join us.', 'Software Engineer I', SRC.record, terms);
   assert.equal(none.years.value, null, 'no minimum stated is not invented as 0');
   assert.equal(postingRequirements('', 'x', SRC.record, terms).status, 'not-read');
   const android = postingRequirements('2+ years of professional software engineering experience', 'Software Engineer II, Android', SRC.record, terms);
   assert.equal(android.role_type.value, 'off-target');
-  assert.equal(android.years.source, SRC.record);
+  assert.equal(android.years.quote_source, SRC.record, 'the quoted sentence is the posting\'s own words');
+  assert.equal(android.years.source, SRC.model, 'the number taken from it is a rule\'s output');
+  assert.equal(android.title_level.source, SRC.model);
   assert.equal(android.role_type.source, SRC.input);
 });
 
@@ -148,6 +152,8 @@ test('v0.2.1 posting title level: senior titles with no years stated are not TAI
   assert.equal(titleLevel('Software Engineer III', SRC.record).value, 'senior');
   assert.equal(titleLevel('Software Engineer II - Recommendations', SRC.record).value, 'mid');
   assert.equal(titleLevel('Software Engineer I, Fullstack (Boston, MA (Hybrid))', SRC.record).value, 'entry-or-unstated');
+  assert.equal(titleLevel('Staff Software Engineer', SRC.record).source, SRC.model);
+  assert.equal(titleLevel('Staff Software Engineer', SRC.record).title_source, SRC.record);
   const terms = config.requirements.off_target_title_terms;
   const staff = postingRequirements('We build software.', 'Staff Software Engineer', SRC.record, terms, SRC.record);
   assert.equal(mismatchCount(staff, 0, 3).value, 2);                       // far, though no years stated
@@ -216,11 +222,14 @@ test('end to end: every role lands in the expected route, through the real score
     't-missing': 'RESEARCH', 't-nodata': 'RESEARCH', 't-twin': 'RESEARCH', 't-biotech': 'RESEARCH',
     't-unchecked': 'CHECK-LIVENESS', 't-uncertain': 'CHECK-LIVENESS',
     't-quick': 'QUICK-APPLY', 't-android': 'NETWORK', 't-far': 'NETWORK', 't-newgrad': 'TAILOR',
+    't-dead-unknown': 'SKIP',
   });
   // board-API listings are records; the years quote comes from the posting text
   const quick = log.roles.find((r) => r.role_id === 't-quick');
   assert.equal(quick.liveness.source, SRC.record);
   assert.equal(quick.posting_requirements.years.value, 3);
+  assert.equal(quick.posting_requirements.years.quote_source, SRC.record);
+  assert.equal(quick.posting_requirements.years.source, SRC.model);
   assert.match(quick.posting_requirements.years.quote, /3\+ years of backend development experience/);
   // agreement with the person's own decisions (one deliberate disagreement in the fixture)
   assert.equal(log.human_agreement.compared, 5);
@@ -236,6 +245,33 @@ test('end to end: every role lands in the expected route, through the real score
   const scores = JSON.parse(fs.readFileSync(path.join(out, 'role-scores.json'), 'utf8'));
   assert.equal(scores._scorer, 'bayesian-role-scorer', 'output came from the repo scorer');
   assert.ok(fs.readFileSync(path.join(out, 'triage-report.md'), 'utf8').startsWith('# New-grad backend triage report\n\n## Executive summary'));
+});
+
+test('refusals: impossible date, --profile, and an existing run are never overwritten', () => {
+  const bad = spawnSync(process.execPath, [path.join(HERE, 'triage.mjs'), '--roles', path.join(FX, 'test/roles.test.json'),
+    '--csv', path.join(FX, 'test/companies.fixture.csv'), '--bls', path.join(FX, 'test/bls.fixture.csv'),
+    '--today', '2027-02-30', '--out-dir', fs.mkdtempSync(path.join(os.tmpdir(), 'triage-bad-'))], { encoding: 'utf8' });
+  assert.equal(bad.status, 2, 'Feb 30 is refused, not rolled to Mar 2');
+  assert.match(bad.stderr, /not YYYY-MM-DD/);
+  const prof = runCli(['--profile', 'anything.json']);
+  assert.equal(prof.res.status, 2);
+  assert.match(prof.res.stderr, /refusing --profile/);
+  const first = runCli([]);
+  assert.equal(first.res.status, 0, first.res.stderr);
+  const again = spawnSync(process.execPath, [path.join(HERE, 'triage.mjs'), '--roles', path.join(FX, 'test/roles.test.json'),
+    '--csv', path.join(FX, 'test/companies.fixture.csv'), '--bls', path.join(FX, 'test/bls.fixture.csv'),
+    '--today', '2026-10-02', '--out-dir', first.out], { encoding: 'utf8' });
+  assert.equal(again.status, 2, 'second run into the same folder is refused');
+  assert.match(again.stderr, /already holds a run/);
+});
+
+test('census: the SEC Form D sample match count is reproducible from shipped data', async () => {
+  const { secMatches } = await import('./census.mjs');
+  const real = parseCsv(fs.readFileSync(path.join(HERE, '../../../../data/80-days-to-stay/80-days-csv/mapped_student_employment_targets_v3.csv'), 'utf8'));
+  const s = secMatches(real, path.join(HERE, '../../../../data/sec/form-d/processed/sample'));
+  assert.equal(s.sample_rows, 200);
+  assert.equal(s.matching_rows, 15);
+  assert.equal(s.distinct_names, 14);
 });
 
 test('bad input fails clearly with exit 2 and no outputs', () => {

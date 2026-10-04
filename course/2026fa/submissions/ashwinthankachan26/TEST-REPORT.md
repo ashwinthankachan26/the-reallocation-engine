@@ -2,7 +2,7 @@
 
 ## Executive summary
 
-I ran the finished prototype from a fresh copy of my branch, separate from my working folder, and recorded everything. The repository's health checks give the same result before and after my changes. The prototype's eleven offline tests pass, the sample run gives the same results as in my working copy, and every named failure case does what the recipe says, without inventing a value. All 31 changed files are inside the folders this course assigns me. Version 0.2 (it reads each posting's requirements, sweeps 80 real postings, and adds a hiring-lag table) was tested the same way from a fresh copy: sixteen tests pass, the sweep reproduces its results offline, and only my folders changed. One check, the personal-data scan, reports one finding before and after both versions. That finding is in a file I didn't touch (it comes from a package installer message), so I documented it rather than "fixing" a file outside my namespace.
+I ran the finished prototype from a fresh copy of my branch, separate from my working folder, and recorded everything. The repository's health checks give the same result before and after my changes. The prototype's eleven offline tests pass, the sample run gives the same results as in my working copy, and every named failure case does what the recipe says, without inventing a value. All 31 changed files are inside the folders this course assigns me. Version 0.2 (it reads each posting's requirements, sweeps 80 real postings, and adds a hiring-lag table) was tested the same way from a fresh copy: sixteen tests passed at that point (seventeen after the census, nineteen after the v0.2.1 review fixes, recorded at the end), the sweep reproduces its results offline, and only my folders changed. One check, the personal-data scan, reports one finding before and after both versions. That finding is in a file I didn't touch (it comes from a package installer message), so I documented it rather than "fixing" a file outside my namespace.
 
 ## Run record
 
@@ -219,3 +219,54 @@ exit=2 files_written=0
 | Network | only `sweep.mjs` (one GET per board to `boards-api.greenhouse.io`) and `--live` (hosts in `live_hosts`) touch the network; the tests and this clean-checkout run used none |
 
 **What the v0.2 gates need a human to judge:** whether each quoted experience sentence is really the posting's requirement (G5); whether a QUICK-APPLY role is worth a referral ask; and the RESEARCH and NETWORK piles, since the out-of-sample check agreed with me on only 3 of 6.
+
+---
+
+## v0.2.1 — review fixes, verified (2026-10-03 20:30 EDT, run by me)
+
+An outside review of the submitted commit `22e0bdb` found real errors. Each was checked against the files and data before anything changed (FRICTIONAL row 27). These are my runs after the fixes. The test-name lines are trimmed; the full output is in `~/Desktop/reallocation-notes/v0.2.1-evidence.txt`, outside the repo.
+
+```text
+== Sat Oct  3 20:30:45 EDT 2026 | v0.2.1 evidence at 22e0bdb + uncommitted fixes
+== 1 tests
+ℹ pass 19
+ℹ fail 0
+== 2 census (incl. SEC match count)
+  SEC Form D sample rows matching a CSV company by name: 15 of 200 (14 distinct names; e.g. DICKERSON PIKE LLC, COMPOSABL, INC., MAP THE SKY LLC, Foundation LLM Technologies, Inc., 13G30 London Ltd Liability Co)
+== 3 sample re-run into a NEW folder
+✓ triaged 11 roles → TAILOR 2 · NETWORK 1 · SKIP 2 · RESEARCH 4 · CHECK-LIVENESS 2
+== 4 sweep re-triage (offline, saved postings) into a NEW folder, with my blind decisions
+✓ triaged 80 roles → NETWORK 57 · QUICK-APPLY 7 · TAILOR 2 · RESEARCH 14
+== 5 refusal: old command into an existing results folder
+✗ course/2026fa/submissions/ashwinthankachan26/runs/sample already holds a run (triage-log.json). Use a new --out-dir, or pass --overwrite to replace it on purpose.
+exit=2
+== 6 refusal: impossible date
+✗ --today "2027-02-30" is not YYYY-MM-DD
+exit=2
+== 7 refusal: --profile
+✗ refusing --profile: the scorer reads "authorized" in a profile as "no sponsorship needed" (see the recipe); this tool never passes a profile to it
+exit=2
+== 8 instructor's liveness command (Canvas 'Before you start')
+✅ active     https://job-boards.greenhouse.io/vestmark/jobs/8009953
+Results: 1 active  0 expired  0 uncertain
+== 9 committed evidence untouched? (only NEW folders should appear)
+?? course/2026fa/submissions/ashwinthankachan26/runs/rerun-sample/
+?? course/2026fa/submissions/ashwinthankachan26/runs/sweep/triage-v0.2.1/
+   committed run folders unchanged ✓
+```
+
+Checked afterwards from the saved logs: the new sweep run gives **identical actions for all 80 postings** as the committed `runs/sweep/triage/`, and only the labels changed. Before: years `record`, title level `record`. After: the quote `record`, the years number `model-judgment`, the title level `model-judgment`. For example: `"5+ years of full life cycle development experience" [record] → 5 [model-judgment]`.
+
+| v0.2.1 fix | Evidence above |
+|---|---|
+| "0 of 200" SEC claim was wrong: really 15 of 200 (14 companies) | step 2, reproducible with `census.mjs`; unit test |
+| Extracted numbers / title levels were labeled `record` | step 4 + saved log; unit tests assert `model-judgment` |
+| README command overwrote committed results | step 5: refused; step 9: committed folders unchanged; unit test |
+| Impossible dates were rolled forward | step 6: refused; unit test |
+| `--profile` was silently ignored | step 7: refused; unit test |
+| A closed posting at an unknown company went to RESEARCH | unit test (`t-dead-unknown` → SKIP) |
+| `ats:liveness` (Canvas "Before you start") never run | step 8 |
+| Missing rate could print as 0%; a "\|" in a title broke tables | fixed in the report writer (no saved run has a missing rate) |
+
+Tests: **19 pass** (was 17). The v0.2 outputs in `runs/live-v0.2/` and `runs/sweep/triage/` are kept unchanged as history; they carry the old labels.
+

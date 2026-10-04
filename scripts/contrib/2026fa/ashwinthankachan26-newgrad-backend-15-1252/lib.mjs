@@ -143,7 +143,8 @@ const DAY = 86400000;
 export const parseDate = (s) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(String(s || ''))) return null;
   const d = new Date(`${s}T00:00:00Z`);
-  return Number.isNaN(d.getTime()) ? null : d;
+  // reject impossible calendar dates (2027-02-30 would otherwise roll to 03-02)
+  return Number.isNaN(d.getTime()) || d.toISOString().slice(0, 10) !== s ? null : d;
 };
 export const iso = (d) => d.toISOString().slice(0, 10);
 export const addDays = (d, n) => new Date(d.getTime() + n * DAY);
@@ -202,13 +203,16 @@ const NEW_GRAD_RE = /\b(new[- ]grad(uate)?s?|recent (college |university )?gradu
 const POSTING_SENIOR_RE = /\b(senior|sr\.?|staff|principal|lead|architect|manager|director|head|vp|distinguished)\b/i;
 const POSTING_FAR_LEVEL_RE = /\b(iii|iv|v|3|4|5)\b/i;   // "Software Engineer III" etc.
 const POSTING_MID_LEVEL_RE = /\b(ii|2)\b/i;
-export function titleLevel(title, source) {
+// The classification is a rule's output (model-judgment); `title_source` records
+// where the title text itself came from (record from a board API, your-input when typed).
+export function titleLevel(title, titleSource) {
   const t = String(title || '').split('(')[0];          // drop "(Boston, MA)"-style suffixes
+  const out = (value, matched, basis) => ({ value, matched, source: SRC.model, title_source: titleSource, basis });
   let m;
-  if ((m = t.match(POSTING_SENIOR_RE))) return { value: 'senior', matched: m[0], source, basis: `posting title contains "${m[0]}" (rule)` };
-  if ((m = t.match(POSTING_FAR_LEVEL_RE))) return { value: 'senior', matched: m[0], source, basis: `posting title level "${m[0]}" (rule)` };
-  if ((m = t.match(POSTING_MID_LEVEL_RE))) return { value: 'mid', matched: m[0], source, basis: `posting title level "${m[0]}" (rule)` };
-  return { value: 'entry-or-unstated', matched: null, source, basis: 'no level word in the posting title (rule)' };
+  if ((m = t.match(POSTING_SENIOR_RE))) return out('senior', m[0], `posting title contains "${m[0]}" (rule)`);
+  if ((m = t.match(POSTING_FAR_LEVEL_RE))) return out('senior', m[0], `posting title level "${m[0]}" (rule)`);
+  if ((m = t.match(POSTING_MID_LEVEL_RE))) return out('mid', m[0], `posting title level "${m[0]}" (rule)`);
+  return out('entry-or-unstated', null, 'no level word in the posting title (rule)');
 }
 
 export function postingRequirements(text, title, source, offTargetTerms = [], titleSource = SRC.input) {
@@ -218,11 +222,11 @@ export function postingRequirements(text, title, source, offTargetTerms = [], ti
   let years;
   if (m) {
     const n = /^\d+$/.test(m[1]) ? Number(m[1]) : WORD_NUM[m[1].toLowerCase()];
-    years = { value: n, quote: m[0].trim().replace(/\s+/g, ' '), source, basis: 'first "N years … experience" phrase in the posting text (rule)' };
+    years = { value: n, source: SRC.model, quote: m[0].trim().replace(/\s+/g, ' '), quote_source: source, basis: 'number taken by a rule from the first "N years … experience" phrase; the quote is the posting\'s own words' };
   } else if (NEW_GRAD_RE.test(body)) {
-    years = { value: 0, quote: body.match(NEW_GRAD_RE)[0], source, basis: 'no years phrase; posting names new grads / entry level (rule)' };
+    years = { value: 0, source: SRC.model, quote: body.match(NEW_GRAD_RE)[0], quote_source: source, basis: 'no years phrase; the posting names new grads / entry level, which the rule reads as 0 years (inference, not a stated number)' };
   } else {
-    years = { value: null, quote: null, source, basis: 'no years phrase and no new-grad wording found: minimum not stated' };
+    years = { value: null, source: SRC.model, quote: null, quote_source: source, basis: 'the rule found no years phrase and no new-grad wording; this is not proof the posting states no minimum' };
   }
   const t = String(title || '');
   const hit = offTargetTerms.find((term) => new RegExp(`\\b${term}\\b`, 'i').test(t));

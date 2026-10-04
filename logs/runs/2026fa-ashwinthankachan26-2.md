@@ -2,7 +2,7 @@
 
 ## Executive summary
 
-Version 0.2 also reads what each job posting asks for. On the same nine real postings it now agrees with the student's own hand decisions on 7 of 8 (Formlabs is the exception: the tool couldn't confirm that page was open). On 80 postings it had never seen, pulled from nine company job boards, it marked only 9 for an application (7 before the persona's experience was corrected from 0 to 1 year). On 6 of those postings the student judged before seeing the tool's answer, it agreed on 3. The misses show what to fix next: a "way too senior, skip" tier, and a better reader for how postings phrase experience.
+Version 0.2 also reads what each job posting asks for. On the same nine real postings it now agrees with the student's own hand decisions on 7 of 8 (Formlabs is the exception: the tool couldn't confirm that page was open). On 80 postings nobody hand-picked, pulled from nine company job boards (a pool that overlaps the live run and was used once in a dry run), it marked only 9 for an application (7 before the persona's experience was corrected from 0 to 1 year). On 6 of those postings the student judged before seeing the tool's answer, it agreed on 3. The misses show what to fix next: a "way too senior, skip" tier, and a better reader for how postings phrase experience.
 
 ---
 

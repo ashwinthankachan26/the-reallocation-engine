@@ -90,6 +90,12 @@
       "company": "Example Proven Co",
       "title": "Software Engineer I",
       "liveness_snapshot": "../snapshots/board-newgrad.json"
+    },
+    {
+      "role_id": "t-dead-unknown",
+      "company": "Nobody Here Corp",
+      "title": "Closed posting at an unknown company",
+      "liveness_snapshot": "../snapshots/expired.json"
     }
   ]
 }

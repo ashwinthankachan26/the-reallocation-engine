@@ -4,7 +4,7 @@
 
 I ran the triage tool on nine real job postings at Boston-area companies, checked live on 2026-10-03. It recommended tailoring five applications. It sent one (Toast) to networking first, because Toast's sponsorship record lists only senior software titles. It flagged one company (SimpliSafe) as missing from the sponsorship data instead of calling it a non-sponsor. It refused to call one page (Formlabs) open when it couldn't see an Apply button, and it skipped a deliberately broken link. I checked values against the source data by hand and deliberately broke the tool twice. The main lesson: the tool's most useful output is what it *won't* claim.
 
-Reading the postings myself showed the biggest gap: 4 of the 5 "tailor" jobs asked for 2–5+ years. So version 0.2 reads each posting's requirements too. On the same nine jobs it now matches my own decisions on 7 of 8. On 80 postings it had never seen, it marked only 9 for an application (7 with my original 0-year persona). On 6 of those I judged before seeing its answer, it agreed with me on 3. That gap is the honest measure of what's left to fix.
+Reading the postings myself showed the biggest gap: 4 of the 5 "tailor" jobs asked for 2–5+ years. So version 0.2 reads each posting's requirements too. On the same nine jobs it now matches my own decisions on 7 of 8. On 80 postings I didn't hand-pick (pulled from nine company job boards), it marked only 9 for an application (7 with my original 0-year persona). On 6 of those I judged before seeing its answer, it agreed with me on 3. That gap is the honest measure of what's left to fix. An outside review later found mistakes in my own documents, including a wrong "0 of 200" figure. I checked each finding and fixed them in version 0.2.1 (see the end of this file).
 
 ## Inputs
 
@@ -77,7 +77,7 @@ The same split applies to every row. Only the matched row, its cells, and live l
 | Break B (the engine) | scorer with profile "F-1 STEM OPT — work authorized (EAD)" | `profile_needs_sponsorship: false`; Proven sponsor 0.4462 Apply → 0.1785 Skip |
 | Live expired path | invalid Greenhouse job ID | redirect to `?error=true` → `expired_url` → Skip |
 
-## v0.2 — reading the posting, and a test on 80 unseen postings
+## v0.2 — reading the posting, and a test on 80 postings I didn't hand-pick
 
 **What changed:** the tool now reads each posting's text (the page the live check already has open, or the job-board API copy). It takes the first "N years … experience" sentence and the title's level word (Senior/Staff/Lead → far; II → close), checks the role type (Android, embedded, … → off-target), and applies my own G5 rule: 0 mismatches → TAILOR, 1 → QUICK-APPLY, 2+ → NETWORK. My experience is set to 1 year (1 year full-time + a 4-month co-op, rounded down).
 
@@ -88,7 +88,7 @@ The same split applies to every row. Only the matched row, its cells, and live l
   scorer: ✓ scored 7 roles → Apply 6 · Consider 0 · Skip 1 (skip 14%)
 ```
 
-Excerpt from `runs/live-v0.2/triage-report.md` (three of its nine columns, location suffixes trimmed from titles; the quotes are verbatim):
+Excerpt from `runs/live-v0.2/triage-report.md` (three of its nine columns, location suffixes trimmed from titles; the quotes are verbatim). These v0.2.0 outputs label the extracted number `[record]`; that was wrong, and v0.2.1 labels the quote `record` and the number `model-judgment`:
 
 | Role | Next action | Posting asks |
 |---|---|---|
@@ -100,7 +100,9 @@ Excerpt from `runs/live-v0.2/triage-report.md` (three of its nine columns, locat
 
 **Agreement with my decisions: 7 of 8** (from the report). The miss is Formlabs: I decided NETWORK, and the tool still says CHECK-LIVENESS because its page check is unsure. This is **in-sample**: the rule was written *from* these decisions, so it shows the rule encodes my judgment, not that it generalizes.
 
-### 80 postings it had never seen (the sweep)
+### 80 postings I didn't hand-pick (the sweep)
+
+Not a clean held-out set: 7 of my 9 live postings are in this pool, and a dry run on it led to one fix (the title-level rule) before the official run. The pool is every posting matching the sweep's title/location filter on nine boards, which also let through 6 engineering-manager titles (the tool sent all of them to NETWORK).
 
 ```text
 ✓ swept 9 boards → 80 software postings (US) saved
@@ -142,7 +144,7 @@ The tool marked **9 of 80** for an application (2 tailor, 7 quick-apply). The ot
 - The pre-run prediction (TAILOR 6, written by Claude) was wrong on **Formlabs**. The page loaded but showed no Apply button the classifier recognized, so the tool held it back. I opened it myself: it's open, with an embedded application form and a "Submit application" button. The form is a Greenhouse embed (an iframe), which the repo's checker doesn't search. The tool was right to hold back, and the human gate caught what the code couldn't.
 - **Toast** confirms my CHANGE-BRIEF prediction 3 from the other direction: the tool can't tell "has sponsored senior engineers" from "won't sponsor new grads", because the title list is truncated.
 - The **14% skip rate** looked unhealthy because I hand-picked relevant roles. The v0.2 sweep answers it: on 80 unfiltered postings only 9 deserve application time.
-- **v0.2, in-sample looked perfect, out-of-sample didn't.** Before the official sweep, a dry run showed Senior/Staff/Lead postings with no "years" sentence going to TAILOR. The years rule never looked at the title. That was fixed before the official run. Then, on 6 postings judged blind, the tool matched me only 3 times. It has no "way too far, skip" result (I skipped 12+ and 8+ year roles it sent to NETWORK), it missed "12+ years **in** the SDLC" because that sentence has no word "experience", and it was stricter than me on a 2+ year role I'd stretch for.
+- **v0.2, in-sample looked perfect, out-of-sample didn't.** Before the official sweep, a dry run showed Senior/Staff/Lead postings with no "years" sentence going to TAILOR. The years rule never looked at the title. That was fixed before the official run. Then, on 6 postings judged blind, the tool matched me only 3 times. It has no "way too far, skip" result (I skipped a 12+ year Staff role it sent to NETWORK, and an 8+ year Staff role at a company missing from the data, which it sent to RESEARCH), it missed "12+ years **in** the SDLC" because that sentence has no word "experience", and it was stricter than me on a 2+ year role I'd stretch for.
 - Smaller misses: the report prints unrounded rates (`97.46835443037976%`), and the software-title regex doesn't count "Full Stack Engineer".
 
 **One concrete next improvement.** v0.1's next step (reading the posting, #6) is now built. The next one is a "too far → SKIP" tier (#7), with the threshold set *before* looking at results, and not tuned to these 6 postings, plus a years reader that doesn't need the word "experience" (#8). After that, per-filing job titles from DOL LCA data (#3) would turn the Toast-type NETWORK results from inferences into records.
@@ -219,4 +221,49 @@ The tool marked **9 of 80** for an application (2 tailor, 7 quick-apply). The ot
 - Senior/Staff/Lead postings with no years sentence went to TAILOR → added `titleLevel()` (stricter of years and title).
 - "Software Product Designer" passed the sweep's "software" filter → excluded designer/PM/recruiter/sales titles, and added "designer" to the off-target list.
 - First sweep test fixture had a non-555 phone number and a non-example.com email (would have tripped pii-scan) → replaced before commit.
+
+## v0.2.1 — an outside review, verified and fixed
+
+After submitting, I ran a strict outside review. It found real errors, mostly in my documents. Every finding was checked against the files and data before any change. The fixes changed **no recommendation**: all 80 sweep postings get the same action as before. What changed is that the numbers and labels are now honest, and the tool refuses things it used to accept quietly.
+
+| Before (v0.2) | After (v0.2.1) |
+|---|---|
+| "0 of 200 SEC sample companies match" | **15 of 200 rows (14 companies)** match by name, reproducible with `census.mjs` |
+| `"3+ years…" → 3 [record]` | `"3+ years…" [record] → 3 [model-judgment]`: the quote is the record, the number is the rule's reading |
+| README example command overwrote committed results | refused unless `--overwrite`; examples write to new folders |
+| `--today 2027-02-30` became 2027-03-02 | refused (exit 2) |
+| `--profile` silently ignored | refused (exit 2) |
+| closed posting at an unknown company → RESEARCH | → SKIP (closed beats unknown) |
+| "I ran every command", "I read each posting", "80 unseen postings" | stated precisely: who ran what; which postings I read; the sweep pool overlapped my live run |
+
+My verification runs are pasted in full in TEST-REPORT (v0.2.1 section) and logged in run log 3.
+
+## Attestation — v0.2.1
+
+- Recipe: newgrad-backend-15-1252 v0.2.1
+- By: Ashwin S Thankachan · 2026-10-03
+
+### Tested
+
+| Ran | Saw | Expected |
+|---|---|---|
+| `node --test …/triage.test.mjs` | 19 pass, 0 fail | all pass, offline |
+| `census.mjs` | 207/571 senior-only; SEC sample matches 15 of 200 (14 names) | reproduces both figures the documents cite |
+| sample re-run into a new folder | TAILOR 2 · NETWORK 1 · SKIP 2 · RESEARCH 4 · CHECK-LIVENESS 2 | same routes as v0.1/v0.2 |
+| sweep re-triage from saved postings into a new folder | NETWORK 57 · QUICK-APPLY 7 · TAILOR 2 · RESEARCH 14; all 80 actions identical; 3 of 6 agreement | label-only change; no action changes |
+| **break attempt:** the old README command into the committed `runs/sample/` | refused, exit 2 | committed evidence can't be overwritten by accident |
+| **break attempt:** `--today 2027-02-30` | refused, exit 2 | impossible dates rejected |
+| **break attempt:** `--profile x.json` | refused, exit 2 | the scorer trap can't be triggered |
+| `npm run ats:liveness -- <Vestmark URL>` | active | the instructor's checker agrees with mine |
+| `git status` after all runs | only the 2 new folders; committed run folders unchanged | nothing tracked modified |
+
+### Did not test
+
+- A new live run: the live and sweep postings weren't re-fetched; v0.2.1 changes labels and refusals, not routing.
+- Whether the outside review missed other errors (it found these; it can't prove there are no more).
+- The privacy question (persona dates vs DATA_CONTRACT): something to ask the instructor; no test can settle it.
+
+### Broke during testing, fixed
+
+- My new date-refusal test first passed a bad date after a good one; the program reads the first `--today`, so the test proved nothing. Rewritten to pass only the bad date.
 

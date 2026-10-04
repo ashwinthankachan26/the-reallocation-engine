@@ -59,6 +59,8 @@ const resolve = (p) => (path.isAbsolute(p) ? p : path.resolve(process.cwd(), p))
 
 // ── inputs ──────────────────────────────────────────────────────────────────
 const live = process.argv.includes('--live');
+const overwrite = process.argv.includes('--overwrite');
+if (process.argv.includes('--profile')) fail('refusing --profile: the scorer reads "authorized" in a profile as "no sponsorship needed" (see the recipe); this tool never passes a profile to it');
 const today = arg('today', localToday());
 if (!parseDate(today)) fail(`--today "${today}" is not YYYY-MM-DD`);
 const rolesPath = resolve(arg('roles', path.join(HERE, 'fixtures/roles.sample.json')));
@@ -198,6 +200,10 @@ if (browser) await browser.close();
 function blobOrMissing(fn) { try { return fn(); } catch (err) { return { status: 'missing', reason: err.message }; } }
 
 // ── hand the scorable roles to the EXISTING scorer ─────────────────────────
+// never replace earlier results by accident (they may be committed evidence)
+if (!overwrite && fs.existsSync(path.join(outDir, 'triage-log.json'))) {
+  fail(`${rel(outDir)} already holds a run (triage-log.json). Use a new --out-dir, or pass --overwrite to replace it on purpose.`);
+}
 fs.mkdirSync(outDir, { recursive: true });
 const scorable = evaluated.filter((e) => e.blockers.length === 0);
 const forScorer = scorable.map((e) => ({
@@ -230,6 +236,12 @@ const byId = new Map(scored.map((s) => [s.role_id, s]));
 for (const e of evaluated) {
   const s = byId.get(e.role_id);
   if (e.blockers.length) {
+    // a closed posting or an impossible timeline is a SKIP even when other evidence is missing
+    if (e.liveness.factor === 0 || e.timeline.factor === 0) {
+      const why = e.liveness.factor === 0 ? `posting closed (${e.liveness.code})` : `timeline impossible (slack ${e.timeline.slack_days}d)`;
+      e.next_action = { action: 'SKIP', why: `${why}; also unresolved: ${e.blockers.map((x) => x.reason).join(', ')}`, source: SRC.model };
+      continue;
+    }
     const b = e.blockers[0];
     e.next_action = { action: b.route, why: e.blockers.map((x) => x.reason).join(', '), source: SRC.model };
     continue;
@@ -318,17 +330,21 @@ const asks = (e) => {
   const r = e.posting_requirements;
   if (!r) return '—';
   if (r.status !== 'read') return 'not read';
-  const y = r.years.value == null ? 'no minimum stated' : `"${r.years.quote.slice(0, 60)}" → ${r.years.value}`;
-  return `${y} [${r.years.source}]${r.role_type.value === 'off-target' ? ` · off-target: ${r.role_type.matched}` : ''}`;
+  const y = r.years.value == null
+    ? `no years phrase found [${r.years.source}]`
+    : `"${r.years.quote.slice(0, 60)}" [${r.years.quote_source}] → ${r.years.value} [${r.years.source}]`;
+  return `${y}${r.role_type.value === 'off-target' ? ` · off-target: ${r.role_type.matched}` : ''}`;
 };
+const cell = (v) => String(v ?? '').replace(/\|/g, '\\|');   // a "|" inside a title would break the table
+const pct = (v) => (v == null || !Number.isFinite(Number(v)) ? 'no rate' : `${Number(Number(v).toFixed(1))}%`);
 for (const e of [...evaluated].sort((a, b) => order[a.next_action.action] - order[b.next_action.action])) {
   const sp = e.sponsorship?.status === 'scored'
-    ? `${e.sponsorship.approvals.value} approvals, ${Number(Number(e.sponsorship.approval_rate.value).toFixed(1))}% → ${e.sponsorship.tier.value}`
+    ? `${e.sponsorship.approvals.value} approvals, ${pct(e.sponsorship.approval_rate.value)} → ${e.sponsorship.tier.value}`
     : (e.sponsorship?.status || e.csv_match.status);
   const lvl = e.sponsorship?.status === 'scored' ? e.level_fit.value : '—';
   const lv = `${e.liveness.result}${e.liveness.factor != null ? ` (×${e.liveness.factor})` : ''} [${e.liveness.source}]`;
   const tl = `×${e.timeline.factor} (slack ${e.timeline.slack_days}d)`;
-  md.push(`| ${e.company} — ${e.title || e.role_id} | **${e.next_action.action}** | ${e.next_action.why} | ${sp} | ${lvl} | ${asks(e)} | ${lv} | ${tl} | ${e.scorer ? e.scorer.composite : '—'} |`);
+  md.push(`| ${cell(e.company)} — ${cell(e.title || e.role_id)} | **${e.next_action.action}** | ${cell(e.next_action.why)} | ${sp} | ${lvl} | ${cell(asks(e))} | ${lv} | ${tl} | ${e.scorer ? e.scorer.composite : '—'} |`);
 }
 md.push('');
 if (agreement) {
@@ -354,9 +370,9 @@ for (const e of evaluated) {
 md.push('');
 md.push('## Verified vs. inferred');
 md.push('');
-md.push('- **record:** approval counts, approval rates, the sponsored-title list, the company median salary offered (80 Days CSV); the national median wage (BLS); liveness only when checked live.');
-md.push('- **record:** the posting\'s own words quoted under "Posting asks" when read live or from a job-board API.');
-md.push('- **model-judgment:** the sponsorship tier and its probability, the level-fit class, the years number taken from the posting quote, the mismatch count, the salary ratio, and the next action — each is a rule applied to records.');
+md.push('- **record:** approval counts, approval rates, the sponsored-title list, the company median salary offered (80 Days CSV); the national median wage (BLS); liveness when checked live, or when a posting was listed on a job-board API at fetch time (a saved sweep snapshot).');
+md.push('- **record:** the posting\'s own words quoted under "Posting asks" when read live or from a job-board API (not from a hand-written sample snapshot, which is your-input).');
+md.push('- **model-judgment:** the sponsorship tier and its probability, the level-fit class, the years number taken from the posting quote, the posting-title level, the off-target classification, the mismatch count, the salary ratio, and the next action — each is a rule applied to records.');
 md.push('- **your-input:** EAD start date, unemployment days, my years of experience, hiring lag and lag scenarios, buffer, tier thresholds, the off-target title list, role titles, and (in sample mode) the liveness snapshots.');
 md.push('');
 md.push('## Salary sanity check (not used in the score)');
@@ -375,7 +391,7 @@ md.push('');
 md.push('## Gates for you to clear');
 md.push('');
 md.push('- [ ] **G2** Each matched CSV company is really the company in the posting (check the name and state columns in the log).');
-md.push('- [ ] **G3** Every TAILOR/NETWORK row was checked live recently; every CHECK-LIVENESS row still needs a check.');
+md.push('- [ ] **G3** Every TAILOR / QUICK-APPLY / NETWORK row was checked live recently; every CHECK-LIVENESS row still needs a check.');
 md.push(`- [ ] **G4** EAD start ${visa.ead_start_date} and a ${lagDays}-day hiring lag are still my best estimates.`);
 md.push('- [ ] **G5** I chose tailor / network / skip for each row myself.');
 md.push('');
@@ -384,7 +400,7 @@ md.push('');
 md.push('- Whether the company will sponsor **this** role: approvals are company-wide, the title list is only the top few, and the CSV does not say which years they cover.');
 md.push('- Anything about companies with no approval data (about 95% of the CSV). Those are unknown, not non-sponsors.');
 md.push('- How well your résumé fits the job: the fit vote is not computed, so the composite tops out at 0.315.');
-md.push('- Recent funding: the CSV funding dates end in September 2025, and the shipped Form D samples match none of its companies.');
+md.push('- Recent funding: the CSV funding dates end in September 2025, and only 15 of the 200 shipped Form D sample rows (14 companies) match a CSV company by name, so funding is not used.');
 if (reqCfg) md.push('- Whether the years number is right. The rule takes the first "N years … experience" phrase in the posting; a company blurb such as "15 years of experience serving clients" would be misread. The quote is shown, so check it before acting.');
 if (gaps.length) for (const g of gaps) md.push(`- ${g}`);
 md.push('');

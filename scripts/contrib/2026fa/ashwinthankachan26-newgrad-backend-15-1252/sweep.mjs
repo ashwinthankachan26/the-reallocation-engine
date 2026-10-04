@@ -26,6 +26,9 @@ const sweep = config.sweep;
 if (!sweep?.host || !Array.isArray(sweep.boards) || !sweep.boards.length) fail('config.sweep needs host and boards');
 const outDir = path.resolve(arg('out-dir', path.join(ROOT, 'course/2026fa/submissions/ashwinthankachan26/runs/sweep')));
 if (outDir.startsWith(path.join(ROOT, 'data'))) fail('refusing to write under data/');
+if (!process.argv.includes('--overwrite') && fs.existsSync(path.join(outDir, 'roles.sweep.json'))) {
+  fail(`${path.relative(ROOT, outDir)} already holds a sweep (roles.sweep.json). Use a new --out-dir, or pass --overwrite to replace it on purpose.`);
+}
 fs.mkdirSync(path.join(outDir, 'snapshots'), { recursive: true });
 
 const fetchedAt = new Date().toISOString();

@@ -12,16 +12,18 @@ promoted_to: null
 
 **What this is.** A small command-line tool for an international new graduate looking for backend software jobs. It checks each job against public H-1B sponsorship records and asks a question the usual "does this company sponsor?" check skips: *does it sponsor people at my level, or only senior engineers?*
 
-**Why use it.** About a third of the sponsors in the engine's dataset with software titles list only senior ones (207 of 571; reproduce with `census.mjs`), and many postings at the rest ask for more experience than a new graduate has. Version 0.2 reads each posting's own requirements too. On 80 real postings at nine sponsors it marked 9 for an application. The tool sends each job to one of six piles: **tailor**, **quick-apply**, **network first**, **skip**, **research by hand**, or **check the posting first**. It shows the evidence and its source for every pile.
+**Why use it.** About a third of the sponsors in the engine's dataset with software titles list only senior ones (207 of 571; reproduce with `census.mjs`), and many postings at the rest ask for more experience than a new graduate has. Version 0.2 reads each posting's own requirements too. On 80 software-related postings from nine company job boards (eight known sponsors plus one company missing from the data), it marked 9 for an application. The tool sends each job to one of six piles: **tailor**, **quick-apply**, **network first**, **skip**, **research by hand**, or **check the posting first**. It shows the evidence and its source for every pile.
 
 **What it decides.** Nothing. It recommends; you decide.
 
 ## Run it (from the repo root)
 
+Every command writes to a **new** folder. The tool refuses a folder that already holds a run unless you add `--overwrite`, so the committed results under `course/2026fa/submissions/ashwinthankachan26/runs/` are never replaced by accident.
+
 Sample run — offline, reproducible, uses the shipped data and saved page snapshots:
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/sample
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --today 2026-10-02 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sample
 ```
 
 Tests — offline, no network, runs the real scorer on fictional fixture data:
@@ -41,14 +43,14 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/census.mj
 Sweep (v0.2): fetch every open software posting on the boards in `config.json` → `sweep` (one host, `boards-api.greenhouse.io`; emails and phones redacted before saving), then triage the saved postings offline:
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/sweep/triage
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/sweep.mjs --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep/roles.sweep.json --today 2026-10-03 --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-sweep/triage
 ```
 
 Live run on your own role list. It opens each URL with the repo's Playwright checker, one at a time, and only if the URL's host is in `config.json` → `live_hosts` (`job-boards.greenhouse.io`, `boards.greenhouse.io`, `jobs.lever.co`, `jobs.ashbyhq.com`, and the careers sites Greenhouse redirected to on 2026-10-03: `www.pathai.com`, `www.klaviyo.com`, `careers.toasttab.com`, `careers.formlabs.com`):
 
 ```bash
-node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles <your-roles.json> --live --out-dir course/2026fa/submissions/ashwinthankachan26/runs/live
+node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mjs --roles <your-roles.json> --live --out-dir course/2026fa/submissions/ashwinthankachan26/runs/rerun-live
 ```
 
 ## Options
@@ -62,6 +64,7 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mj
 | `--out-dir` | `course/2026fa/submissions/ashwinthankachan26/runs/<today>` | where every output goes; writing under `data/` is refused |
 | `--csv`, `--bls` | the shipped repo files | override data paths (tests use fixtures) |
 | `--live` | off | check URLs live instead of reading snapshots |
+| `--overwrite` | off | allow writing into an `--out-dir` that already holds a run (otherwise refused) |
 | `--human` | none | a JSON of your own decisions (`{ "decisions": { role_id: ACTION } }`); the report shows where the tool agrees |
 
 ## What it reads
@@ -85,9 +88,10 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mj
 
 ## Labels
 
-- `record` — a cell read from a repo data file, or a live liveness check
+- `record` — a cell read from a repo data file, a live liveness check, or the posting's own quoted words
 - `model-judgment` — a rule this tool applies to records: sponsorship tier and probability, level fit, salary ratio, next action
 - `your-input` — persona dates, `config.json` values, and liveness read from a **hand-written** sample snapshot (fixture text)
+- `model-judgment` — also the years number taken from a quote, the posting-title level and the off-target class (each is a rule's output; corrected in v0.2.1)
 - A snapshot saved by `sweep.mjs` is `record`: it is the job board's own API text at `fetched_at` (emails and phones redacted), not text anyone wrote. A hand-written sample snapshot is `your-input`. The `method` field (`snapshot` vs `board-api`) records which one it is.
 
 ## How it fails
@@ -103,6 +107,10 @@ node scripts/contrib/2026fa/ashwinthankachan26-newgrad-backend-15-1252/triage.mj
 | Persona missing `target_role.experience_years` while `requirements` is configured | exit 2; never defaulted |
 | Posting not checked, or checker unsure | `CHECK-LIVENESS` — never treated as live |
 | `--live` URL on a host not in `live_hosts` | `CHECK-LIVENESS` · `host-not-allowed`; the page is never opened |
+| Closed posting or impossible timeline at a company missing from the data | `SKIP` (closed beats unknown) |
+| Impossible date such as `2027-02-30` | exit 2; never rolled to the next month |
+| `--profile` passed | exit 2; the scorer's "authorized" trap is never triggered |
+| `--out-dir` already holds a run | exit 2 unless `--overwrite` |
 | Posting closed | scored with liveness ×0 → `SKIP` |
 | Start date would land after the unemployment limit | timeline ×0 → `SKIP` |
 | Persona missing an EAD date, bad JSON, bad date | exit 2 with a message; nothing written |
